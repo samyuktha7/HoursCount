@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/todayTAB"
+        android:title="TODAY"
+        />
+    <item
+        android:id="@+id/weekTAB"
+        android:title="WEEK"
+        />
+
+    <item
+        android:id="@+id/sheetsTAB"
+        android:title="SHEETS" />
+</menu>
