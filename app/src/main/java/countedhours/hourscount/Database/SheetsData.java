@@ -4,6 +4,7 @@ public class SheetsData {
 
     /*
     This table stores the sheets data for all the weeks with week start date, week end date and hours covered during that week.
+    sheets data will store hours of every week. Every end of the week, database will be updated with the week ending hours.
     +---------------------------------------------------------------+
     |                 TABLE NAME = SHEETSDATA                       |
     | ------------------------------------------------------------- |

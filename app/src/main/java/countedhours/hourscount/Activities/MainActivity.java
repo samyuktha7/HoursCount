@@ -1,11 +1,5 @@
 package countedhours.hourscount.Activities;
 
-
-
-
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
-
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -23,7 +17,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity {
-
 
     BottomNavigationView mBottomNavigation;
     Fragment mFragment;

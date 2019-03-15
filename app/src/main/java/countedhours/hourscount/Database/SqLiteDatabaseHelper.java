@@ -96,7 +96,7 @@ public class SqLiteDatabaseHelper extends SQLiteOpenHelper {
 
     public AddressInformation fetchAddressGeo(String address) {
         Log.d(TAG, "fetch Address Geo Locations from Database");
-        AddressInformation addressInformation = null;
+        AddressInformation addressInformation = new AddressInformation();
         if(address != null) {
             Cursor dbCursor = retrieveAddressInfo();
             while(dbCursor.moveToNext()) {
@@ -117,8 +117,8 @@ public class SqLiteDatabaseHelper extends SQLiteOpenHelper {
     public AddressInformation getLastSavedAddressInfo() {
         Log.d(TAG, "getLastSavedAddressInfo()");
         Cursor dbCursor = retrieveAddressInfo();
-        AddressInformation lastSavedAddress = new AddressInformation();
-        if(dbCursor != null && dbCursor.getCount() >0) {
+        AddressInformation lastSavedAddress= new AddressInformation();
+        if(dbCursor.getCount() >0) {
             dbCursor.moveToPosition(dbCursor.getCount() - 1);
             lastSavedAddress.setAddress(dbCursor.getString(dbCursor.getColumnIndex(AddressInformation.ADDRESS)));
             lastSavedAddress.setLatitude(dbCursor.getDouble(dbCursor.getColumnIndex(AddressInformation.LATITUDE)));
