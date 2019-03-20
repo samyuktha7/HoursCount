@@ -146,7 +146,7 @@ public class ProfileActivity extends AppCompatActivity {
         */
         mGeofence = new Geofence.Builder()
                 .setRequestId(id)
-                .setCircularRegion(mLocation.getLatitude(), mLocation.getLongitude(), 40)
+                .setCircularRegion(mLocation.getLatitude(), mLocation.getLongitude(), 50)
                 .setExpirationDuration(Geofence.NEVER_EXPIRE)
                 .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER
                         | Geofence.GEOFENCE_TRANSITION_EXIT)

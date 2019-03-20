@@ -26,7 +26,7 @@ public class SqLiteDatabaseHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION =3;
     private static final String DATABASE_NAME = "timeSheets.db";
     public SQLiteDatabase mDatabase;
-    private TimerTask mTimerTask = new TimerTask();
+    private TimerTask mTimerTask;
     private static SqLiteDatabaseHelper mInstance = null;
     private String TAG = "SqLiteDatabaseHelper";
 
@@ -36,6 +36,7 @@ public class SqLiteDatabaseHelper extends SQLiteOpenHelper {
     private Context mCxt;
 
     public static SqLiteDatabaseHelper getInstance(Context ctx) {
+        Log.d("SqLiteDatabaseHelper", "SqLiteDatabaseHelper(): getInstance()");
         /**
          * use the application context as suggested by CommonsWare.
          * this will ensure that you dont accidentally leak an Activitys
@@ -54,7 +55,9 @@ public class SqLiteDatabaseHelper extends SQLiteOpenHelper {
      */
     private SqLiteDatabaseHelper(Context ctx) {
         super(ctx, DATABASE_NAME, null, DATABASE_VERSION);
+        Log.d(TAG, "SqLiteDatabaseHelper() constructor");
         mCxt= ctx;
+        mTimerTask = new TimerTask(mCxt);
     }
 
     
