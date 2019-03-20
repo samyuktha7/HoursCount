@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
@@ -65,7 +66,7 @@ public class GeoIntentService extends IntentService {
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         Log.d(TAG, "onHandleIntent() ");
-        dbhelper = new SqLiteDatabaseHelper(this, "AddressCommit", null, 1);
+        dbhelper = SqLiteDatabaseHelper.getInstance(this);
 
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
         if (geofencingEvent.hasError()) {

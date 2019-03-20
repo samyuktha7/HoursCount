@@ -20,12 +20,5 @@ public class AlarmReceiver extends BroadcastReceiver {
     public void onReceive(final Context context, Intent intent) {
         dbhelper = new SqLiteDatabaseHelper(context, "AddressCommit", null, 1);
         dbhelper.resetGeofencevalues();
-        // TODO: This method is called when the BroadcastReceiver is receiving
-        // an Intent broadcast.
-        throw new UnsupportedOperationException("Not yet implemented");
-
-
-
-
     }
 }

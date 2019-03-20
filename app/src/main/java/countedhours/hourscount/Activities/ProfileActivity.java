@@ -59,7 +59,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         mAddressInformation = (EditText) findViewById(R.id.addressField);
         mSaveAddressButton = (Button) findViewById(R.id.Enter);
-        dbHelper = new SqLiteDatabaseHelper(this, "AddressCommit", null, 1);
+        dbHelper = SqLiteDatabaseHelper.getInstance(ProfileActivity.this);
     }
 
     @Override
@@ -146,7 +146,7 @@ public class ProfileActivity extends AppCompatActivity {
         */
         mGeofence = new Geofence.Builder()
                 .setRequestId(id)
-                .setCircularRegion(mLocation.getLatitude(), mLocation.getLongitude(), 50)
+                .setCircularRegion(mLocation.getLatitude(), mLocation.getLongitude(), 40)
                 .setExpirationDuration(Geofence.NEVER_EXPIRE)
                 .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER
                         | Geofence.GEOFENCE_TRANSITION_EXIT)
@@ -204,8 +204,9 @@ public class ProfileActivity extends AppCompatActivity {
 
         // Set the alarm to start at approximately 00:00 h(24h format).
         Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 00);
+        calendar.set(Calendar.HOUR_OF_DAY, 23); // For 1 PM or 2 PM
+        calendar.set(Calendar.MINUTE, 59);
+        calendar.set(Calendar.SECOND, 0);
 
         //repeteat alarm every 24hours
         alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),

@@ -7,6 +7,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.google.android.gms.location.Geofence;
+
+import countedhours.hourscount.TimerTask;
+
 
 /*
 This class is SqLIteOpenHelper which performs all the operations such as reading and writing to databases
@@ -22,12 +26,37 @@ public class SqLiteDatabaseHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION =3;
     private static final String DATABASE_NAME = "timeSheets.db";
     public SQLiteDatabase mDatabase;
-    Context mContext;
+    private TimerTask mTimerTask = new TimerTask();
+    private static SqLiteDatabaseHelper mInstance = null;
     private String TAG = "SqLiteDatabaseHelper";
 
     public SqLiteDatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
     }
+    private Context mCxt;
+
+    public static SqLiteDatabaseHelper getInstance(Context ctx) {
+        /**
+         * use the application context as suggested by CommonsWare.
+         * this will ensure that you dont accidentally leak an Activitys
+         * context (see this article for more information:
+         * http://android-developers.blogspot.nl/2009/01/avoiding-memory-leaks.html)
+         */
+        if (mInstance == null) {
+            mInstance = new SqLiteDatabaseHelper(ctx.getApplicationContext());
+        }
+        return mInstance;
+    }
+
+    /**
+     * constructor should be private to prevent direct instantiation.
+     * make call to static factory method "getInstance()" instead.
+     */
+    private SqLiteDatabaseHelper(Context ctx) {
+        super(ctx, DATABASE_NAME, null, DATABASE_VERSION);
+        mCxt= ctx;
+    }
+
     
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
@@ -60,6 +89,15 @@ public class SqLiteDatabaseHelper extends SQLiteOpenHelper {
         values.put(GeofenceTransitions.TIME_OCCURRED, timeOccurred);
         int row_id=(int)db.insert(GeofenceTransitions.GEO_FENCE_TRANSITIONS_TABLE, null, values);
         db.close();
+
+        if(transitionType == Geofence.GEOFENCE_TRANSITION_ENTER) {
+            Log.d(TAG, "Geofence Enter");
+            mTimerTask.startTimer();
+        } else if (transitionType == Geofence.GEOFENCE_TRANSITION_EXIT) {
+            Log.d(TAG, "Geofence Exit");
+            mTimerTask.pauseTimer();
+        }
+
         return row_id;
     }
 
