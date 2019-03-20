@@ -4,6 +4,8 @@ import android.app.IntentService;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
@@ -74,12 +76,23 @@ public class GeoIntentService extends IntentService {
         // Test that the reported transition was of interest.
         if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
             Log.d(TAG, "GEOFENCE_TRANSITION_ENTER");
-            Toast.makeText(this, "Geofence Entered", Toast.LENGTH_SHORT).show();
+            toast("Geofence Entered", Toast.LENGTH_SHORT);
         } else if(geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
             Log.d(TAG, "GEOFENCE_TRANSITION_EXIT");
-            Toast.makeText(this, "Geofence Exited", Toast.LENGTH_SHORT).show();
+            toast("Geofence Exited", Toast.LENGTH_SHORT);
         }
     }
+
+    private void toast(final String text, final int duration) {
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getApplicationContext(), text, duration).show();
+            }
+        });
+    }
+
 
     @Override
     public void onDestroy() {
