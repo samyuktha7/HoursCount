@@ -2,6 +2,7 @@ package countedhours.hourscount.Activities;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -20,19 +21,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
 
+import countedhours.hourscount.BroadcastReceivers.AlarmReceiver;
 import countedhours.hourscount.Database.AddressInformation;
 import countedhours.hourscount.Database.SqLiteDatabaseHelper;
 import countedhours.hourscount.R;
@@ -114,6 +114,7 @@ public class ProfileActivity extends AppCompatActivity {
 
                             //startGeoFence
                             startGeoFence();
+                            startAlarmToClearDatabase();
 
                         } else {
                             Log.d(TAG, "could not store in database");
@@ -190,6 +191,27 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
     }
+
+    /*
+    set the alarm everyday to clear the database. AlarmReceiver is the broadcast receiver receives the alarm
+    and performs the operation.
+     */
+    private void startAlarmToClearDatabase() {
+        Log.d(TAG, "startAlarmToClearDatabase()");
+        AlarmManager alarmMgr = (AlarmManager)this.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(ProfileActivity.this, AlarmReceiver.class);
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(ProfileActivity.this, 0, intent, 0);
+
+        // Set the alarm to start at approximately 00:00 h(24h format).
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR_OF_DAY, 00);
+
+        //repeteat alarm every 24hours
+        alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                AlarmManager.INTERVAL_DAY, alarmIntent);
+    }
+
 
 //    public void startService() {
 //        //Stored in Shared Preferences and database successfully, start the alarm manager to

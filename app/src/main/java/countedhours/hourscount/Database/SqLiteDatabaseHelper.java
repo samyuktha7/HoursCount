@@ -36,6 +36,7 @@ public class SqLiteDatabaseHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(CheckInOutTimings.CREATE_TABLE_CHECKINOUT_TIMINGS);
         sqLiteDatabase.execSQL(AddressInformation.CREATE_TABLE_ADDRESS_INFORMATION);
         sqLiteDatabase.execSQL(WeekData.CREATE_TABLE_WEEK_TIMINGS);
+        sqLiteDatabase.execSQL(GeofenceTransitions.CREATE_TABLE_GEOFENCE_TRANSITIONS);
     }
 
     @Override
@@ -46,6 +47,43 @@ public class SqLiteDatabaseHelper extends SQLiteOpenHelper {
     public synchronized SQLiteDatabase openDatabase() {
         mDatabase = this.getWritableDatabase();
         return mDatabase;
+    }
+
+    /*
+    Inserts the values into geofenceTransitionValues
+     */
+    public synchronized int insertGeofenceTransitionValues(int transitionType, long timeOccurred) {
+        Log.d(TAG, "insertGeofenceTransitionValues");
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(GeofenceTransitions.TRANSITION_TYPE, transitionType);
+        values.put(GeofenceTransitions.TIME_OCCURRED, timeOccurred);
+        int row_id=(int)db.insert(GeofenceTransitions.GEO_FENCE_TRANSITIONS_TABLE, null, values);
+        db.close();
+        return row_id;
+    }
+
+    /*
+    Resets ths values in GeofenceTransitionTable. Usually cleared once every day.
+     */
+    public synchronized void resetGeofencevalues() {
+        Log.d(TAG, "resetGeofenceValues()");
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("delete from "+ GeofenceTransitions.GEO_FENCE_TRANSITIONS_TABLE);
+        db.close();
+        retrieveGeofenceValues();
+    }
+
+    /*
+    Fetches the values in GEO_FENCE_TRANSITIONS_TABLE TABLE.
+     */
+    public Cursor retrieveGeofenceValues() {
+        Log.d(TAG, "retrieveGeofenceValues()");
+        String selectQuery = "SELECT  * FROM " + GeofenceTransitions.GEO_FENCE_TRANSITIONS_TABLE;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        Log.d(TAG, "retreiveGeofenceValues(): cursor count :"+cursor.getCount());
+        return cursor;
     }
 
     public int insertCheckInOutValues(long check_in, long check_out) {

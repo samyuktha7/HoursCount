@@ -30,11 +30,14 @@
         <!-- </intent-filter> -->
         <!-- </receiver> -->
 
+        <service
+            android:name=".service.GeoIntentService"
+            android:exported="true"></service>
 
-        <service android:name=".service.GeoIntentService"
-            android:exported="true">
-        </service>
-
+        <receiver
+            android:name=".BroadcastReceivers.AlarmReceiver"
+            android:enabled="true"
+            android:exported="true"></receiver>
     </application>
 
 </manifest>

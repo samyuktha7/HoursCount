@@ -15,6 +15,8 @@ import com.google.android.gms.location.GeofencingEvent;
 
 import java.util.List;
 
+import countedhours.hourscount.Database.SqLiteDatabaseHelper;
+
 import static com.google.android.gms.common.GooglePlayServicesUtil.getErrorString;
 
 
@@ -24,6 +26,7 @@ This Intent Service is triggered by transition through GEOFENCE. It enters onHan
 public class GeoIntentService extends IntentService {
 
     private String TAG = "GeoIntentService";
+    private SqLiteDatabaseHelper dbhelper;
 
     public GeoIntentService() {
         super(GeoIntentService.class.getSimpleName());
@@ -62,6 +65,7 @@ public class GeoIntentService extends IntentService {
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         Log.d(TAG, "onHandleIntent() ");
+        dbhelper = new SqLiteDatabaseHelper(this, "AddressCommit", null, 1);
 
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
         if (geofencingEvent.hasError()) {
@@ -77,9 +81,13 @@ public class GeoIntentService extends IntentService {
         if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
             Log.d(TAG, "GEOFENCE_TRANSITION_ENTER");
             toast("Geofence Entered", Toast.LENGTH_SHORT);
+            int id = insertIntoGeofenceTransitionDatabse(Geofence.GEOFENCE_TRANSITION_ENTER);
+            Log.d(TAG, "id ="+id+" Enter");
         } else if(geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
             Log.d(TAG, "GEOFENCE_TRANSITION_EXIT");
             toast("Geofence Exited", Toast.LENGTH_SHORT);
+            int id = insertIntoGeofenceTransitionDatabse(Geofence.GEOFENCE_TRANSITION_EXIT);
+            Log.d(TAG, "id ="+id+" Exit");
         }
     }
 
@@ -91,6 +99,10 @@ public class GeoIntentService extends IntentService {
                 Toast.makeText(getApplicationContext(), text, duration).show();
             }
         });
+    }
+
+    private int insertIntoGeofenceTransitionDatabse(int transition) {
+        return dbhelper.insertGeofenceTransitionValues(transition, System.currentTimeMillis());
     }
 
 
