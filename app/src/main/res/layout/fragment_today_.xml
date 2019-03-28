@@ -9,6 +9,26 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:text="Hours Worked"
+        android:id="@+id/workingHours"
+        android:textSize="20dp"
+        android:layout_gravity="center"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/timeElapsed"
+        android:text="0 completed"
+        android:paddingTop="150dp"
+        />
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/timeLeftOut"
+        android:text="8 hours left to finish"
+        android:textSize="25dp"
+        android:paddingTop="150dp"/>
 
 </FrameLayout>

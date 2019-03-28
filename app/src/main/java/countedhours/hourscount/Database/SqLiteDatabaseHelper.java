@@ -57,7 +57,7 @@ public class SqLiteDatabaseHelper extends SQLiteOpenHelper {
         super(ctx, DATABASE_NAME, null, DATABASE_VERSION);
         Log.d(TAG, "SqLiteDatabaseHelper() constructor");
         mCxt= ctx;
-        mTimerTask = new TimerTask(mCxt);
+        mTimerTask = TimerTask.getInstance(mCxt);
     }
 
     
