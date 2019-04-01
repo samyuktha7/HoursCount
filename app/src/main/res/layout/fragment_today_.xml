@@ -19,7 +19,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/timeElapsed"
         android:text="0 completed"
-        android:paddingTop="150dp"
+        android:paddingTop="70dp"
+        android:textSize="25dp"
         />
 
 
@@ -30,5 +31,13 @@
         android:text="8 hours left to finish"
         android:textSize="25dp"
         android:paddingTop="150dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/InOffice"
+        android:text="Out Of Office"
+        android:textSize="25dp"
+        android:paddingTop="250dp"/>
 
 </FrameLayout>

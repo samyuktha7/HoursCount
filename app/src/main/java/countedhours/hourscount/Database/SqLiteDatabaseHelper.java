@@ -9,8 +9,6 @@ import android.util.Log;
 
 import com.google.android.gms.location.Geofence;
 
-import countedhours.hourscount.TimerTask;
-
 
 /*
 This class is SqLIteOpenHelper which performs all the operations such as reading and writing to databases
@@ -26,7 +24,6 @@ public class SqLiteDatabaseHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION =3;
     private static final String DATABASE_NAME = "timeSheets.db";
     public SQLiteDatabase mDatabase;
-    private TimerTask mTimerTask;
     private static SqLiteDatabaseHelper mInstance = null;
     private String TAG = "SqLiteDatabaseHelper";
 
@@ -57,7 +54,6 @@ public class SqLiteDatabaseHelper extends SQLiteOpenHelper {
         super(ctx, DATABASE_NAME, null, DATABASE_VERSION);
         Log.d(TAG, "SqLiteDatabaseHelper() constructor");
         mCxt= ctx;
-        mTimerTask = TimerTask.getInstance(mCxt);
     }
 
     
@@ -82,29 +78,6 @@ public class SqLiteDatabaseHelper extends SQLiteOpenHelper {
     }
 
     /*
-    Inserts the values into geofenceTransitionValues
-     */
-    public synchronized int insertGeofenceTransitionValues(int transitionType, long timeOccurred) {
-        Log.d(TAG, "insertGeofenceTransitionValues");
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(GeofenceTransitions.TRANSITION_TYPE, transitionType);
-        values.put(GeofenceTransitions.TIME_OCCURRED, timeOccurred);
-        int row_id=(int)db.insert(GeofenceTransitions.GEO_FENCE_TRANSITIONS_TABLE, null, values);
-        db.close();
-
-        if(transitionType == Geofence.GEOFENCE_TRANSITION_ENTER) {
-            Log.d(TAG, "Geofence Enter");
-            mTimerTask.startTimer();
-        } else if (transitionType == Geofence.GEOFENCE_TRANSITION_EXIT) {
-            Log.d(TAG, "Geofence Exit");
-            mTimerTask.pauseTimer();
-        }
-
-        return row_id;
-    }
-
-    /*
     Resets ths values in GeofenceTransitionTable. Usually cleared once every day.
      */
     public synchronized void resetGeofencevalues() {
@@ -113,6 +86,20 @@ public class SqLiteDatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("delete from "+ GeofenceTransitions.GEO_FENCE_TRANSITIONS_TABLE);
         db.close();
         retrieveGeofenceValues();
+    }
+
+    public GeofenceTransitions getLastSavedGeofenceTransition() {
+        Log.d(TAG, "getLastSavedGeofenceTransition()");
+        Cursor dbCursor = retrieveGeofenceValues();
+        GeofenceTransitions geofenceTransition = new GeofenceTransitions();
+        if(dbCursor.getCount() >0) {
+            dbCursor.moveToPosition(dbCursor.getCount() - 1);
+            geofenceTransition.setTransitionType(dbCursor.getInt(dbCursor.getColumnIndex(GeofenceTransitions.TRANSITION_TYPE)));
+            geofenceTransition.setTimeOccurred(dbCursor.getLong(dbCursor.getColumnIndex(GeofenceTransitions.TIME_OCCURRED)));
+        } else {
+            Log.d(TAG, "getLastSavedAddressInfo(): database is empty");
+        }
+        return getLastSavedGeofenceTransition();
     }
 
     /*
@@ -138,11 +125,10 @@ public class SqLiteDatabaseHelper extends SQLiteOpenHelper {
         return row_id;
     }
 
-    public int insertSheetsValues(String weekStart, String weekEnd, Float hours) {
+    public int insertSheetsValues(String weekEnd, Float hours) {
         Log.d(TAG, "insertSheetsValues()");
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(SheetsData.COLUMN_WEEK_START, weekStart);
         values.put(SheetsData.COLUMN_WEEK_END, weekEnd);
         values.put(SheetsData.COLUMN_HOURS, hours);
         int row_id=(int)db.insert(SheetsData.SHEETS_TABLE, null, values);

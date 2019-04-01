@@ -1,7 +1,6 @@
 package countedhours.hourscount.Activities;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -11,7 +10,6 @@ import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -33,6 +31,7 @@ import java.util.List;
 import java.util.UUID;
 
 import countedhours.hourscount.BroadcastReceivers.AlarmReceiver;
+import countedhours.hourscount.BroadcastReceivers.WeeklyReceiver;
 import countedhours.hourscount.Database.AddressInformation;
 import countedhours.hourscount.Database.SqLiteDatabaseHelper;
 import countedhours.hourscount.R;
@@ -114,7 +113,7 @@ public class ProfileActivity extends AppCompatActivity {
 
                             //startGeoFence
                             startGeoFence();
-                            startAlarmToClearDatabase();
+                            startAlarmToPerformOp();
 
                         } else {
                             Log.d(TAG, "could not store in database");
@@ -196,21 +195,35 @@ public class ProfileActivity extends AppCompatActivity {
     set the alarm everyday to clear the database. AlarmReceiver is the broadcast receiver receives the alarm
     and performs the operation.
      */
-    private void startAlarmToClearDatabase() {
-        Log.d(TAG, "startAlarmToClearDatabase()");
+    private void startAlarmToPerformOp() {
+        Log.d(TAG, "startAlarmToPerformOp()");
         AlarmManager alarmMgr = (AlarmManager)this.getSystemService(Context.ALARM_SERVICE);
+
+        //Perform Daily Operations
         Intent intent = new Intent(ProfileActivity.this, AlarmReceiver.class);
         PendingIntent alarmIntent = PendingIntent.getBroadcast(ProfileActivity.this, 0, intent, 0);
-
         // Set the alarm to start at approximately 00:00 h(24h format).
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 23); // For 1 PM or 2 PM
-        calendar.set(Calendar.MINUTE, 59);
+        calendar.set(Calendar.HOUR_OF_DAY, 23); // For 11:55 PM
+        calendar.set(Calendar.MINUTE, 50);
         calendar.set(Calendar.SECOND, 0);
-
         //repeteat alarm every 24hours
         alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
                 AlarmManager.INTERVAL_DAY, alarmIntent);
+
+
+        //perform Weekly operations
+        Intent intentWeek = new Intent(ProfileActivity.this, WeeklyReceiver.class);
+        PendingIntent weekIntent = PendingIntent.getBroadcast(ProfileActivity.this, 0, intent, 0);
+
+        Calendar weekCalendar = Calendar.getInstance();
+        weekCalendar.set(Calendar.HOUR_OF_DAY, 23);
+        weekCalendar.set(Calendar.MINUTE, 55);
+        weekCalendar.set(Calendar.SECOND, 0);
+
+        alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                (7*AlarmManager.INTERVAL_DAY), weekIntent);
+
     }
 
 

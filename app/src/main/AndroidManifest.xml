@@ -32,10 +32,14 @@
 
         <service
             android:name=".service.GeoIntentService"
-            android:exported="true"></service>
+            android:exported="true" />
 
         <receiver
             android:name=".BroadcastReceivers.AlarmReceiver"
+            android:enabled="true"
+            android:exported="true" />
+        <receiver
+            android:name=".BroadcastReceivers.WeeklyReceiver"
             android:enabled="true"
             android:exported="true"></receiver>
     </application>

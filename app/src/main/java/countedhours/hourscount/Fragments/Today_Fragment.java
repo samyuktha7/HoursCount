@@ -1,6 +1,9 @@
 package countedhours.hourscount.Fragments;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,26 +15,29 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
-import countedhours.hourscount.Interfaces.IUpdateTimeElapsed;
 import countedhours.hourscount.R;
-import countedhours.hourscount.TimerTask;
 
 
-public class Today_Fragment extends Fragment implements IUpdateTimeElapsed {
+public class Today_Fragment extends Fragment {
 
-    private TextView mTimeRemaining, mHoursCompleted;
+    private TextView mTimeRemaining, mHoursCompleted, mInOffice;
     private String TAG = "TodayFragment";
-    private TimerTask mTimerTask;
     private DateFormat formatter;
+    private SharedPreferences mSharedPreferences;
+    private boolean alreadyStarted = false;
+    private Handler updateTimeHandler = new Handler();
+    private boolean inOffice = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView");
+
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_today_, container, false);
         mHoursCompleted = v.findViewById(R.id.timeElapsed);
         mTimeRemaining = v.findViewById(R.id.timeLeftOut);
+        mInOffice = v.findViewById(R.id.InOffice);
         return v;
     }
 
@@ -44,22 +50,67 @@ public class Today_Fragment extends Fragment implements IUpdateTimeElapsed {
         formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
 
         if (this.getActivity() != null) {
-            mTimerTask = TimerTask.getInstance(this.getActivity());
-            mTimerTask.registerUpdateTimeElapsed(this);
+            mSharedPreferences = this.getActivity().getSharedPreferences("TIME", Context.MODE_PRIVATE);
+            if (mSharedPreferences != null) {
+                updateTimeElapsed();
+                if (!alreadyStarted) {
+                    updateTimeHandler.postDelayed(updateTimerThread, 0);
+                }
+                alreadyStarted = true;
+            } else {
+                Log.d(TAG, "sharedpreferences Context null");
+            }
         } else {
             Log.w(TAG, "context is null");
         }
     }
 
-    @Override
-    public void onUpdateTimeElapsed(long time) {
-        Log.d(TAG, "onUpdateTimeElapsed() "+time);
+    private Runnable updateTimerThread = new Runnable() {
+        public void run() {
+            if (checkInOffice()) {
+                updateTimeElapsed();
+            } else {
+                Log.w(TAG, "out of office");
+            }
+            updateTimeHandler.postDelayed(this, 1000);
+        }
+    };
 
+
+    private void updateTimeElapsed() {
+        Log.d(TAG, "updateTimeElapsed()");
+
+        long startTime = mSharedPreferences.getLong("StartTime", 0);
+        long totalTime = mSharedPreferences.getLong("TotalTime", 0);
+        if (startTime != 0) {
+            long bufferTime = System.currentTimeMillis() - startTime;
+            totalTime = totalTime + bufferTime;
+            Log.d(TAG, "time() " + totalTime);
+            updateUI(totalTime);
+        }
+    }
+
+    private boolean checkInOffice() {
+        boolean check = mSharedPreferences.getBoolean("InOffice", false);
+        if (inOffice != check) {
+            inOffice = check;
+            if (inOffice) {
+                mInOffice.setText("In Office");
+            } else {
+                mInOffice.setText("Out Of Office");
+            }
+        }
+        Log.d(TAG, "checkInOffice() "+inOffice);
+        return inOffice;
+    }
+
+    private void updateUI(long totalTime) {
+        Log.d(TAG, "updateUI()");
         //setting the time Elapsed
-        mHoursCompleted.setText(formatter.format(new Date(time)) + " Finished");
+        mHoursCompleted.setText(formatter.format(new Date(totalTime)) + " Finished");
 
         //Calculating and setting the time Remaining
-        long timeToWork = ((8 * 60 * 60000) - time);
+        long timeToWork = ((8 * 60 * 60000) - totalTime);
         mTimeRemaining.setText(formatter.format(new Date(timeToWork)) + " Remaining ");
     }
 
@@ -67,11 +118,12 @@ public class Today_Fragment extends Fragment implements IUpdateTimeElapsed {
     public void onPause() {
         super.onPause();
         Log.d(TAG, "onPause()");
+        updateTimeHandler.removeCallbacks(updateTimerThread);
+        alreadyStarted = false;
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        mTimerTask.unregisterupdateTimeElapsed(this);
     }
 }

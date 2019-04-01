@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
 import android.os.Looper;
@@ -27,7 +28,6 @@ This Intent Service is triggered by transition through GEOFENCE. It enters onHan
 public class GeoIntentService extends IntentService {
 
     private String TAG = "GeoIntentService";
-    private SqLiteDatabaseHelper dbhelper;
 
     public GeoIntentService() {
         super(GeoIntentService.class.getSimpleName());
@@ -45,6 +45,7 @@ public class GeoIntentService extends IntentService {
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.d(TAG, "onCreate()");
     }
 
     /**
@@ -66,7 +67,8 @@ public class GeoIntentService extends IntentService {
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         Log.d(TAG, "onHandleIntent() ");
-        dbhelper = SqLiteDatabaseHelper.getInstance(this);
+        SharedPreferences sharedPreferences = getSharedPreferences("TIME", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
 
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
         if (geofencingEvent.hasError()) {
@@ -80,16 +82,32 @@ public class GeoIntentService extends IntentService {
 
         // Test that the reported transition was of interest.
         if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
+            //Handle toasts
             Log.d(TAG, "GEOFENCE_TRANSITION_ENTER");
             toast("Geofence Entered", Toast.LENGTH_SHORT);
-            int id = insertIntoGeofenceTransitionDatabse(Geofence.GEOFENCE_TRANSITION_ENTER);
-            Log.d(TAG, "id ="+id+" Enter");
+
+            //Enter values into SharedPreferences
+            //start time = currentmilliseconds
+            editor.putLong("StartTime", System.currentTimeMillis());
+            long totalTime = sharedPreferences.getLong("TotalTime", 0);
+            editor.putLong("TotalTime", totalTime);
+            editor.putBoolean("InOffice", true);
+
         } else if(geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
+            //Handle Toasts
             Log.d(TAG, "GEOFENCE_TRANSITION_EXIT");
             toast("Geofence Exited", Toast.LENGTH_SHORT);
-            int id = insertIntoGeofenceTransitionDatabse(Geofence.GEOFENCE_TRANSITION_EXIT);
-            Log.d(TAG, "id ="+id+" Exit");
+
+            //Enter values into shared preferences
+            //totalTime = totalTime + CurrentTime - startTime;
+            //start time = 0
+            long startTime = sharedPreferences.getLong("StartTime", 0);
+            long totalTime = sharedPreferences.getLong("TotalTime", 0);
+            editor.putLong("TotalTime", (totalTime + (System.currentTimeMillis() - startTime)));
+            editor.putLong("StartTime", 0);
+            editor.putBoolean("InOffice", false);
         }
+        editor.apply();
     }
 
     private void toast(final String text, final int duration) {
@@ -101,11 +119,6 @@ public class GeoIntentService extends IntentService {
             }
         });
     }
-
-    private int insertIntoGeofenceTransitionDatabse(int transition) {
-        return dbhelper.insertGeofenceTransitionValues(transition, System.currentTimeMillis());
-    }
-
 
     @Override
     public void onDestroy() {
