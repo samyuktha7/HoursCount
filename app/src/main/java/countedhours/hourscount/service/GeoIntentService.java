@@ -15,6 +15,9 @@ import android.widget.Toast;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import countedhours.hourscount.Database.SqLiteDatabaseHelper;
@@ -85,6 +88,17 @@ public class GeoIntentService extends IntentService {
             //Handle toasts
             Log.d(TAG, "GEOFENCE_TRANSITION_ENTER");
             toast("Geofence Entered", Toast.LENGTH_SHORT);
+
+            //Stores the LastCheckInValue
+            String lastChecked = sharedPreferences.getString("LastCheckedIn", null);
+            if (lastChecked == null) {
+                DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+                Date date = new Date();
+                String checkInTime = dateFormat.format(date);
+                Log.d(TAG, "todays time  "+checkInTime);
+
+                editor.putString("LastCheckedIn", checkInTime);
+            }
 
             //Enter values into SharedPreferences
             //start time = currentmilliseconds

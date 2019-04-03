@@ -49,6 +49,7 @@ public class ProfileActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     private Geofence mGeofence;
     private GeofencingClient mGeofencingClient;
+    private SharedPreferences.Editor mEditor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +112,7 @@ public class ProfileActivity extends AppCompatActivity {
                             // this code should be here, not in onResume().
 //                            startService();
 
+                            resetEverything();
                             //startGeoFence
                             startGeoFence();
                             startAlarmToPerformOp();
@@ -129,6 +131,23 @@ public class ProfileActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void resetEverything() {
+        Log.d(TAG, "resetEverything()");
+        SharedPreferences sharedPreferences = this.getSharedPreferences("TIME", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("LastCheckedIn", null);
+        editor.putLong("StartTime", 0);
+        editor.putLong("TotalTime", 0);
+        editor.putBoolean("InOffice", false);
+        editor.putFloat("TotalWeekTime", 0);
+
+        //clears all days values in a week
+        for (int i = 1; i <=7; i++) {
+            editor.putFloat(String.valueOf(i), 0);
+        }
+        editor.apply();
     }
 
     private void startGeoFence() {
@@ -276,9 +295,9 @@ public class ProfileActivity extends AppCompatActivity {
 
     public void storeAddressInSharedPreferences(String address) {
         Log.d(TAG, "storeAddressInSharedPreferences " + address);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("Address", address);
-        editor.apply();
+        mEditor = sharedPreferences.edit();
+        mEditor.putString("Address", address);
+        mEditor.apply();
     }
 
     public String getAddressFromSharedPreferences() {

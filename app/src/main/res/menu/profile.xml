@@ -7,7 +7,7 @@
     <item
         android:id="@+id/profilebutton"
         android:title="Profile"
-        android:icon="@drawable/profile"
+        android:icon="@drawable/editlocation"
         app:showAsAction="always" />
 
 </menu>

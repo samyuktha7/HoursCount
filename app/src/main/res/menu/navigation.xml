@@ -2,6 +2,7 @@
     <item
         android:id="@+id/todayTAB"
         android:title="TODAY"
+
         />
     <item
         android:id="@+id/weekTAB"
@@ -10,5 +11,6 @@
 
     <item
         android:id="@+id/sheetsTAB"
-        android:title="SHEETS" />
+        android:title="SHEETS"
+        android:icon="@drawable/list"/>
 </menu>
