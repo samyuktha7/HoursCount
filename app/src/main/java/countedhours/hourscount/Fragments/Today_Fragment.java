@@ -1,6 +1,7 @@
 package countedhours.hourscount.Fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -16,11 +18,13 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 import countedhours.hourscount.R;
+import countedhours.hourscount.service.GeoIntentService;
 
 
 public class Today_Fragment extends Fragment {
 
-    private TextView mTimeRemaining, mHoursCompleted, mInOffice, mLastCheckedIn;
+    private TextView mTimeRemaining, mHoursCompleted, mInOffice, mLastCheckedIn, mLastCheckedOut;
+    private Button mPauseButton, mStartButton;
     private String TAG = "TodayFragment";
     private DateFormat formatter;
     private SharedPreferences mSharedPreferences;
@@ -28,6 +32,7 @@ public class Today_Fragment extends Fragment {
     private Handler updateTimeHandler = new Handler();
     private boolean inOffice;
     private boolean resetEverything = false;
+    private String checkIn, checkOut;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -42,6 +47,9 @@ public class Today_Fragment extends Fragment {
         mTimeRemaining = v.findViewById(R.id.timeLeftOut);
         mInOffice = v.findViewById(R.id.InOffice);
         mLastCheckedIn = v.findViewById(R.id.LastCheckedIn);
+        mLastCheckedOut = v.findViewById(R.id.LastCheckedOut);
+        mPauseButton = v.findViewById(R.id.pauseButton);
+        mStartButton = v.findViewById(R.id.startButton);
         return v;
     }
 
@@ -71,6 +79,27 @@ public class Today_Fragment extends Fragment {
         } else {
             Log.w(TAG, "context is null");
         }
+
+        /*
+        This block pause button and start button is for testing purposes. must be deleted later
+         */
+        mPauseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), GeoIntentService.class);
+                intent.putExtra("pause", 7);
+                getActivity().startService(intent);
+            }
+        });
+
+        mStartButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), GeoIntentService.class);
+                intent.putExtra("pause", 5);
+                getActivity().startService(intent);
+            }
+        });
     }
 
     /*
@@ -86,13 +115,20 @@ public class Today_Fragment extends Fragment {
                 updateTimeElapsed();
             } else {
                 Log.w(TAG, "out of office");
+
                 // reset during updateThreadHandler will update the UI with reset values.
-                if (!resetEverything) {
+                resetEverything = mSharedPreferences.getBoolean("reset", false);
+                if (resetEverything) {
                     long totalTime = mSharedPreferences.getLong("TotalTime", 0);
                     if (totalTime == 0) {
                         updateUI(0, true);
                     }
-                    resetEverything = true;
+                }
+
+                //update checkOutTime always
+                checkOut = mSharedPreferences.getString("LastCheckedOut", null);
+                if (checkOut != null) {
+                    mLastCheckedOut.setText(checkOut);
                 }
             }
             //loop
@@ -116,10 +152,6 @@ public class Today_Fragment extends Fragment {
             totalTime = totalTime + bufferTime;
             Log.d(TAG, "time() " + totalTime);
             updateUI(totalTime, false);
-            String checkIn = mSharedPreferences.getString("LastCheckedIn", null);
-            if (checkIn != null) {
-                mLastCheckedIn.setText(checkIn);
-            }
         } else {
             Log.d(TAG, "startTime equal to 0");
             updateUI(0, true);
@@ -147,7 +179,7 @@ public class Today_Fragment extends Fragment {
     updates UI with real or reset values
      */
     private void updateUI(long totalTime, boolean reset) {
-        Log.d(TAG, "updateUI()");
+        Log.d(TAG, "updateUI() reset = "+reset);
          if (!reset) {
              //setting the time Elapsed
              mHoursCompleted.setText(formatter.format(new Date(totalTime)) + " Finished");
@@ -155,11 +187,28 @@ public class Today_Fragment extends Fragment {
              //Calculating and setting the time Remaining
              long timeToWork = ((8 * 60 * 60000) - totalTime);
              mTimeRemaining.setText(formatter.format(new Date(timeToWork)) + " Remaining ");
+
+
+             checkIn = mSharedPreferences.getString("LastCheckedIn", null);
+             if (checkIn != null) {
+                 mLastCheckedIn.setText(checkIn);
+             }
+
+             checkOut = mSharedPreferences.getString("LastCheckedOut", null);
+             if (checkOut != null) {
+                 mLastCheckedOut.setText(checkOut);
+             }
          } else {
              mHoursCompleted.setText("0 hours finished");
              mTimeRemaining.setText("8 hours remaining");
              mLastCheckedIn.setText("00:00");
+             mLastCheckedOut.setText("00:00");
              mInOffice.setText("Out Of Office");
+
+             //Notify reset complete
+             SharedPreferences.Editor editor = mSharedPreferences.edit();
+             editor.putBoolean("reset", false);
+             editor.apply();
          }
     }
 

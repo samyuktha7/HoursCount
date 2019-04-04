@@ -44,8 +44,16 @@ public class AlarmReceiver extends BroadcastReceiver {
             editor.putLong("StartTime", 0);
             editor.putLong("TotalTime", 0);
 
+            //clearsFirstCheckIn and LastCheckout
+            editor.putString("LastCheckedOut", null);
+
+            //clears InOffice boolean
+            editor.putBoolean("InOffice", false);
+
+            //updates the UI to reset everything
+            editor.putBoolean("reset", true);
+
             editor.apply();
-        } else {
             Log.d(TAG, "totalTime 0. Might be non-working-day");
         }
     }

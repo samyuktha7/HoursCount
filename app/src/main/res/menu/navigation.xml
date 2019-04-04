@@ -2,11 +2,13 @@
     <item
         android:id="@+id/todayTAB"
         android:title="TODAY"
+        android:icon="@drawable/today"
 
         />
     <item
         android:id="@+id/weekTAB"
         android:title="WEEK"
+        android:icon="@drawable/week"
         />
 
     <item

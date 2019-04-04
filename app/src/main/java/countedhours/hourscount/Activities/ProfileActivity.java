@@ -50,6 +50,7 @@ public class ProfileActivity extends AppCompatActivity {
     private Geofence mGeofence;
     private GeofencingClient mGeofencingClient;
     private SharedPreferences.Editor mEditor;
+    private String temp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,9 +97,13 @@ public class ProfileActivity extends AppCompatActivity {
                 if (mSaveAddressButton.getText() == "EDIT") {
                     Log.d(TAG, "edit button pressed");
                     setAddressField(String.valueOf(mAddressInformation.getText()), true, true);
+                    temp = String.valueOf(mAddressInformation.getText());
                 } else if (mSaveAddressButton.getText() == "SAVE") {
                     Log.d(TAG, "Save button pressed");
                     mAddress = String.valueOf(mAddressInformation.getText());
+
+                    // checks if the address is changed.
+//                    if (!temp.equals(mAddress)) {
                     mLocation = getLocationFromAddress(mAddress);
                     if (mLocation != null) {
                         Log.d(TAG, "lat " + mLocation.getLatitude() + " long " + mLocation.getLongitude());
@@ -110,13 +115,11 @@ public class ProfileActivity extends AppCompatActivity {
                             Toast.makeText(ProfileActivity.this, "Address Stored", Toast.LENGTH_SHORT).show();
                             setAddressField(mAddress, false, false);
                             // this code should be here, not in onResume().
-//                            startService();
 
                             resetEverything();
                             //startGeoFence
                             startGeoFence();
                             startAlarmToPerformOp();
-
                         } else {
                             Log.d(TAG, "could not store in database");
                             storeAddressInSharedPreferences(null);
@@ -129,19 +132,29 @@ public class ProfileActivity extends AppCompatActivity {
                         setAddressField(null, true, true);
                     }
                 }
-            }
+//                    } else {
+//                        Toast.makeText(ProfileActivity.this, "Address did not change.", Toast.LENGTH_SHORT).show();
+//                        setAddressField(mAddress, false, false);
+//                    }
+                }
+
         });
     }
 
+    /*
+    Resets all the Values in UI, on a new day or when the address is changed
+     */
     private void resetEverything() {
         Log.d(TAG, "resetEverything()");
         SharedPreferences sharedPreferences = this.getSharedPreferences("TIME", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("LastCheckedIn", null);
+        editor.putString("LastCheckedOut", null);
         editor.putLong("StartTime", 0);
         editor.putLong("TotalTime", 0);
         editor.putBoolean("InOffice", false);
         editor.putFloat("TotalWeekTime", 0);
+        editor.putBoolean("reset", true);
 
         //clears all days values in a week
         for (int i = 1; i <=7; i++) {
@@ -223,8 +236,8 @@ public class ProfileActivity extends AppCompatActivity {
         PendingIntent alarmIntent = PendingIntent.getBroadcast(ProfileActivity.this, 0, intent, 0);
         // Set the alarm to start at approximately 00:00 h(24h format).
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 23); // For 11:55 PM
-        calendar.set(Calendar.MINUTE, 50);
+        calendar.set(Calendar.HOUR_OF_DAY, 19); // For 11:55 PM
+        calendar.set(Calendar.MINUTE, 01);
         calendar.set(Calendar.SECOND, 0);
         //repeteat alarm every 24hours
         alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
@@ -237,43 +250,13 @@ public class ProfileActivity extends AppCompatActivity {
 
         Calendar weekCalendar = Calendar.getInstance();
         weekCalendar.set(Calendar.HOUR_OF_DAY, 23);
-        weekCalendar.set(Calendar.MINUTE, 55);
+        weekCalendar.set(Calendar.MINUTE, 58);
         weekCalendar.set(Calendar.SECOND, 0);
 
         alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
                 (7*AlarmManager.INTERVAL_DAY), weekIntent);
 
     }
-
-
-//    public void startService() {
-//        //Stored in Shared Preferences and database successfully, start the alarm manager to
-//        //service every day in a particular timezone
-//
-//        // every day at 7 am
-//        Calendar startTime = Calendar.getInstance();
-////                            Calendar stopTime = Calendar.getInstance();
-//
-////                            // if it's after or equal 7 am schedule for next day
-////                            if (Calendar.getInstance().get(Calendar.HOUR_OF_DAY) >= 17) {
-////                                Log.d(TAG, "alarm will start from tomorrrow");
-////                                startTime.add(Calendar.DAY_OF_YEAR, 1); // add, not set!
-////                            }
-////                            startTime.set(Calendar.HOUR_OF_DAY, 16);
-////                            startTime.set(Calendar.MINUTE, 07);
-////                            startTime.set(Calendar.SECOND, 0);
-//
-//        Intent intent = new Intent(ProfileActivity.this, CountService.class);
-//        PendingIntent pendingIntent = PendingIntent.getService(ProfileActivity.this, 0, intent,
-//                0);
-//        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-//
-//        if (alarmManager != null) {
-//            Log.d(TAG, "Alarm set to the calendar time and will run every day");
-//            alarmManager.setInexactRepeating(AlarmManager.RTC, startTime.getTimeInMillis(),
-//                    30*60*1000, pendingIntent);
-//        }
-//    }
 
     public Address getLocationFromAddress(String strAddress) {
         Geocoder coder = new Geocoder(this);

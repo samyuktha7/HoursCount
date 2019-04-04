@@ -29,7 +29,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Checked In"
+            android:text="First Check In"
             android:textSize="22dp"
             android:paddingTop="50dp"/>
 
@@ -52,7 +52,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Checked Out"
+            android:text="Last Checked Out"
             android:textSize="22dp"
             android:paddingTop="50dp"/>
 
@@ -95,5 +95,20 @@
         android:textSize="25dp"
         android:gravity="center_horizontal"
         android:paddingTop="280dp"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pause"
+        android:id="@+id/pauseButton"
+        android:gravity="center_horizontal"
+        />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start"
+        android:id="@+id/startButton"
+        android:layout_gravity="end"
+        android:gravity="center_horizontal"/>
 
 </FrameLayout>

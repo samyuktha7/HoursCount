@@ -82,14 +82,15 @@ public class GeoIntentService extends IntentService {
 
         // Get the transition type.
         int geofenceTransition = geofencingEvent.getGeofenceTransition();
+        int temp = intent.getIntExtra("pause", 0);
 
         // Test that the reported transition was of interest.
-        if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
+        if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER || temp == 5) {
             //Handle toasts
             Log.d(TAG, "GEOFENCE_TRANSITION_ENTER");
             toast("Geofence Entered", Toast.LENGTH_SHORT);
 
-            //Stores the LastCheckInValue
+            //Stores the LastCheckInValue - only done once a day
             String lastChecked = sharedPreferences.getString("LastCheckedIn", null);
             if (lastChecked == null) {
                 DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
@@ -107,7 +108,7 @@ public class GeoIntentService extends IntentService {
             editor.putLong("TotalTime", totalTime);
             editor.putBoolean("InOffice", true);
 
-        } else if(geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
+        } else if(geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT || temp == 7) {
             //Handle Toasts
             Log.d(TAG, "GEOFENCE_TRANSITION_EXIT");
             toast("Geofence Exited", Toast.LENGTH_SHORT);
@@ -120,8 +121,18 @@ public class GeoIntentService extends IntentService {
             editor.putLong("TotalTime", (totalTime + (System.currentTimeMillis() - startTime)));
             editor.putLong("StartTime", 0);
             editor.putBoolean("InOffice", false);
+
+            //stores lastCheckOut - done everytime GeoFence EXIT triggers.
+            DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+            Date date = new Date();
+            String checkInTime = dateFormat.format(date);
+            Log.d(TAG, "checkOutTime "+checkInTime);
+
+            editor.putString("LastCheckedOut", checkInTime);
         }
         editor.apply();
+
+
     }
 
     private void toast(final String text, final int duration) {
