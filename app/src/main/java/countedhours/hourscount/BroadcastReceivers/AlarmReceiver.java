@@ -5,8 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
-import java.util.Calendar;
-import java.util.Date;
+import countedhours.hourscount.CommonUtils;
 
 /*
 This Broadcast Receiver AlarmReceiver will receive events every day to perform following operations
@@ -17,29 +16,29 @@ This Broadcast Receiver AlarmReceiver will receive events every day to perform f
 public class AlarmReceiver extends BroadcastReceiver {
 
     private String TAG = "HC_"+AlarmReceiver.class.getSimpleName();
+    private CommonUtils mUtils;
 
     @Override
     public void onReceive(final Context context, Intent intent) {
         Log.d(TAG, "onReceive()");
+        mUtils = new CommonUtils();
         SharedPreferences mSharedPreferences = context.getSharedPreferences("TIME", Context.MODE_PRIVATE);
         long totalTime = mSharedPreferences.getLong("TotalTime",-1);
         if (totalTime != -1) {
             //Stores the total time in day_of_week field.
-            Date now = new Date();
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(now);
-            int day_of_week = calendar.get(Calendar.DAY_OF_WEEK);
-            Log.d(TAG, " day of the week = "+day_of_week);
+            int day_of_week = mUtils.getDayOfTheWeek();
+
             SharedPreferences.Editor editor = mSharedPreferences.edit();
-            editor.putLong(String.valueOf(day_of_week), totalTime);
+            editor.putFloat(String.valueOf(day_of_week), ((float) totalTime / (60 * 60000)));
 
             //stores the totalTime for Week (In Hours)
             float totalWeekTime = mSharedPreferences.getFloat("TotalWeekTime", 0);
-            float totalTimeInHours = (totalTime / (60 * 60000));
+            float totalTimeInHours = ((float) totalTime / (60 * 60000));
             totalWeekTime = totalWeekTime + totalTimeInHours;
             editor.putFloat("TotalWeekTime", totalWeekTime);
             Log.d(TAG, "totalWeekTime = "+totalWeekTime);
 
+            //resets
             //clears the startTime and totalTime to calculate for next day.
             editor.putLong("StartTime", 0);
             editor.putLong("TotalTime", 0);
@@ -54,7 +53,8 @@ public class AlarmReceiver extends BroadcastReceiver {
             editor.putBoolean("reset", true);
 
             editor.apply();
-            Log.d(TAG, "totalTime 0. Might be non-working-day");
+        } else {
+            Log.d(TAG, "Might be a non-working-day");
         }
     }
 }

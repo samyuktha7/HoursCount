@@ -2,8 +2,10 @@ package countedhours.hourscount.Activities;
 
 import android.Manifest;
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -46,6 +48,7 @@ public class ProfileActivity extends AppCompatActivity {
     private Geofence mGeofence;
     private GeofencingClient mGeofencingClient;
     private SharedPreferences.Editor mEditor;
+    private String temp;
 
 
     @Override
@@ -79,36 +82,71 @@ public class ProfileActivity extends AppCompatActivity {
                 if (mSaveAddressButton.getText() == "EDIT") {
                     Log.d(TAG, "edit button pressed");
                     setAddressField(String.valueOf(mAddressInformation.getText()), true, true);
-//                    String temp = String.valueOf(mAddressInformation.getText());
+//                    temp = String.valueOf(mAddressInformation.getText());
                 } else if (mSaveAddressButton.getText() == "SAVE") {
                     Log.d(TAG, "Save button pressed");
                     mAddress = String.valueOf(mAddressInformation.getText());
 
+                    //This temp checking should be there. Please add later. removed for easy testing.
                     // checks if the address is changed.
 //                    if (!temp.equals(mAddress)) {
-                    mLocation = getLocationFromAddress(mAddress);
-                    if (mLocation != null) {
-                        Log.d(TAG, "lat " + mLocation.getLatitude() + " long " + mLocation.getLongitude());
-                        // save it in Shared Preferences.
-                        storeAddressInSharedPreferences(mAddress);
-                        Toast.makeText(ProfileActivity.this, "Address Stored", Toast.LENGTH_SHORT).show();
-                        setAddressField(mAddress, false, false);
-                        // this code should be here, not in onResume().
-
-                        resetEverything();
-                        //startGeoFence
-                        startGeoFence();
-                        startAlarmToPerformOp();
-                    } else {
-                        Log.d(TAG, "location is null");
-                        Toast.makeText(ProfileActivity.this, "Address not Valid. Enter New address", Toast.LENGTH_SHORT).show();
-                        storeAddressInSharedPreferences(null);
-                        setAddressField(null, true, true);
-                    }
+                       showAlertDialog();
+//                    } else {
+//                        setAddressField(mAddress, false, false);
+//                        Toast.makeText(ProfileActivity.this, "Address is not changed", Toast.LENGTH_SHORT).show();
+//                    }
                 }
             }
 
         });
+    }
+
+    private void showAlertDialog() {
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
+        builder1.setMessage("Resetting address will reset all your values");
+        builder1.setCancelable(true);
+
+        builder1.setPositiveButton(
+                "Yes",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                       storeNewAddress();
+                    }
+                });
+
+        builder1.setNegativeButton(
+                "No",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                        setAddressField(temp, false, false);
+                    }
+                });
+
+        AlertDialog alert11 = builder1.create();
+        alert11.show();
+    }
+
+    private void storeNewAddress() {
+        mLocation = getLocationFromAddress(mAddress);
+        if (mLocation != null) {
+            Log.d(TAG, "lat " + mLocation.getLatitude() + " long " + mLocation.getLongitude());
+            // save it in Shared Preferences.
+            storeAddressInSharedPreferences(mAddress);
+            Toast.makeText(ProfileActivity.this, "Address Stored", Toast.LENGTH_SHORT).show();
+            setAddressField(mAddress, false, false);
+            // this code should be here, not in onResume().
+
+            resetEverything();
+            //startGeoFence
+            startGeoFence();
+            startAlarmToPerformOp();
+        } else {
+            Log.d(TAG, "location is null");
+            Toast.makeText(ProfileActivity.this, "Address not Valid. Enter New address", Toast.LENGTH_SHORT).show();
+            storeAddressInSharedPreferences(null);
+            setAddressField(null, true, true);
+        }
     }
 
     /*
