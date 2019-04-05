@@ -17,6 +17,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+
+import countedhours.hourscount.Activities.ProfileActivity;
 import countedhours.hourscount.R;
 import countedhours.hourscount.service.GeoIntentService;
 
@@ -25,7 +27,7 @@ public class Today_Fragment extends Fragment {
 
     private TextView mTimeRemaining, mHoursCompleted, mInOffice, mLastCheckedIn, mLastCheckedOut;
     private Button mPauseButton, mStartButton;
-    private String TAG = "TodayFragment";
+    private String TAG = "HC_"+Today_Fragment.class.getSimpleName();
     private DateFormat formatter;
     private SharedPreferences mSharedPreferences;
     private boolean alreadyStarted = false;

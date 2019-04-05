@@ -30,7 +30,7 @@ This Intent Service is triggered by transition through GEOFENCE. It enters onHan
  */
 public class GeoIntentService extends IntentService {
 
-    private String TAG = "GeoIntentService";
+    private String TAG = "HC_"+GeoIntentService.class.getSimpleName();;
 
     public GeoIntentService() {
         super(GeoIntentService.class.getSimpleName());

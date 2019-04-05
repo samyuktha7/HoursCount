@@ -32,8 +32,6 @@ import java.util.UUID;
 
 import countedhours.hourscount.BroadcastReceivers.AlarmReceiver;
 import countedhours.hourscount.BroadcastReceivers.WeeklyReceiver;
-import countedhours.hourscount.Database.AddressInformation;
-import countedhours.hourscount.Database.SqLiteDatabaseHelper;
 import countedhours.hourscount.R;
 import countedhours.hourscount.service.GeoIntentService;
 
@@ -42,15 +40,13 @@ public class ProfileActivity extends AppCompatActivity {
     private EditText mAddressInformation;
     private String mAddress;
     private Button mSaveAddressButton;
-    private SqLiteDatabaseHelper dbHelper;
-    private String TAG = "ProfileActivity";
-    public Double[] latLong = new Double[2];
+    private String TAG = "HC_"+ProfileActivity.class.getSimpleName();
     private Address mLocation;
     private SharedPreferences sharedPreferences;
     private Geofence mGeofence;
     private GeofencingClient mGeofencingClient;
     private SharedPreferences.Editor mEditor;
-    private String temp;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +56,6 @@ public class ProfileActivity extends AppCompatActivity {
 
         mAddressInformation = (EditText) findViewById(R.id.addressField);
         mSaveAddressButton = (Button) findViewById(R.id.Enter);
-        dbHelper = SqLiteDatabaseHelper.getInstance(ProfileActivity.this);
     }
 
     @Override
@@ -73,22 +68,9 @@ public class ProfileActivity extends AppCompatActivity {
         if (mAddress != null) {
             Log.d(TAG, "address found in shared preferences");
             setAddressField(mAddress, false, false);
-//            startGeoFence();
-
-            // this should actually be on save button click listener ( after the adddress is stored in the database). This code is added here only for testing purposes
-//            startService();
-
         } else {
-            AddressInformation addressInformation = dbHelper.getLastSavedAddressInfo();
-            if (addressInformation != null) {
-                Log.d(TAG, "address found in database");
-                mAddress = addressInformation.getAddress();
-                storeAddressInSharedPreferences(mAddress);
-                setAddressField(mAddress, false, false);
-            } else {
-                Log.w(TAG, "address not found in Shared Preferences and database. Please Enter a new one");
+                Log.w(TAG, "address not found in Shared Preferences. Please Enter a new one");
                 setAddressField(null, true, true);
-            }
         }
 
         mSaveAddressButton.setOnClickListener(new View.OnClickListener() {
@@ -97,7 +79,7 @@ public class ProfileActivity extends AppCompatActivity {
                 if (mSaveAddressButton.getText() == "EDIT") {
                     Log.d(TAG, "edit button pressed");
                     setAddressField(String.valueOf(mAddressInformation.getText()), true, true);
-                    temp = String.valueOf(mAddressInformation.getText());
+//                    String temp = String.valueOf(mAddressInformation.getText());
                 } else if (mSaveAddressButton.getText() == "SAVE") {
                     Log.d(TAG, "Save button pressed");
                     mAddress = String.valueOf(mAddressInformation.getText());
@@ -107,24 +89,16 @@ public class ProfileActivity extends AppCompatActivity {
                     mLocation = getLocationFromAddress(mAddress);
                     if (mLocation != null) {
                         Log.d(TAG, "lat " + mLocation.getLatitude() + " long " + mLocation.getLongitude());
-                        // save it in the database and Shared Preferences.
+                        // save it in Shared Preferences.
                         storeAddressInSharedPreferences(mAddress);
-                        int row_id = storeAddressInDatabase(mAddress, mLocation.getLatitude(), mLocation.getLongitude());
-                        if (row_id > 0) {
-                            Log.d(TAG, "saved in database: row_id " + row_id);
-                            Toast.makeText(ProfileActivity.this, "Address Stored", Toast.LENGTH_SHORT).show();
-                            setAddressField(mAddress, false, false);
-                            // this code should be here, not in onResume().
+                        Toast.makeText(ProfileActivity.this, "Address Stored", Toast.LENGTH_SHORT).show();
+                        setAddressField(mAddress, false, false);
+                        // this code should be here, not in onResume().
 
-                            resetEverything();
-                            //startGeoFence
-                            startGeoFence();
-                            startAlarmToPerformOp();
-                        } else {
-                            Log.d(TAG, "could not store in database");
-                            storeAddressInSharedPreferences(null);
-                            setAddressField(null, true, true);
-                        }
+                        resetEverything();
+                        //startGeoFence
+                        startGeoFence();
+                        startAlarmToPerformOp();
                     } else {
                         Log.d(TAG, "location is null");
                         Toast.makeText(ProfileActivity.this, "Address not Valid. Enter New address", Toast.LENGTH_SHORT).show();
@@ -132,11 +106,7 @@ public class ProfileActivity extends AppCompatActivity {
                         setAddressField(null, true, true);
                     }
                 }
-//                    } else {
-//                        Toast.makeText(ProfileActivity.this, "Address did not change.", Toast.LENGTH_SHORT).show();
-//                        setAddressField(mAddress, false, false);
-//                    }
-                }
+            }
 
         });
     }
@@ -286,11 +256,6 @@ public class ProfileActivity extends AppCompatActivity {
     public String getAddressFromSharedPreferences() {
         Log.d(TAG, "getAddressFromSharedPreferences() ");
         return sharedPreferences.getString("Address", null);
-    }
-
-    public int storeAddressInDatabase(String address, double latitude, double longitude) {
-        Log.d(TAG, "storeAddressInDatabase() " + address);
-        return dbHelper.insertAddressInfoValues(mAddress, latLong[0], latLong[1]);
     }
 
     public void setAddressField(String address, boolean enabled, boolean save) {

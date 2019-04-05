@@ -16,7 +16,7 @@ This Broadcast Receiver AlarmReceiver will receive events every day to perform f
  */
 public class AlarmReceiver extends BroadcastReceiver {
 
-    private String TAG = "AlarmReceiver";
+    private String TAG = "HC_"+AlarmReceiver.class.getSimpleName();
 
     @Override
     public void onReceive(final Context context, Intent intent) {
