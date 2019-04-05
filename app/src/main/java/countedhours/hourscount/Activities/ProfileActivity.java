@@ -236,8 +236,8 @@ public class ProfileActivity extends AppCompatActivity {
         PendingIntent alarmIntent = PendingIntent.getBroadcast(ProfileActivity.this, 0, intent, 0);
         // Set the alarm to start at approximately 00:00 h(24h format).
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 19); // For 11:55 PM
-        calendar.set(Calendar.MINUTE, 01);
+        calendar.set(Calendar.HOUR_OF_DAY, 23); // For 11:55 PM
+        calendar.set(Calendar.MINUTE, 55);
         calendar.set(Calendar.SECOND, 0);
         //repeteat alarm every 24hours
         alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),

@@ -33,6 +33,7 @@ public class Today_Fragment extends Fragment {
     private boolean inOffice;
     private boolean resetEverything = false;
     private String checkIn, checkOut;
+    private boolean firstUpdate = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -70,6 +71,7 @@ public class Today_Fragment extends Fragment {
 
                 //start the UI handler to update every second.
                 if (!alreadyStarted) {
+                    firstUpdate = true;
                     updateTimeHandler.postDelayed(updateTimerThread, 0);
                 }
                 alreadyStarted = true;
@@ -113,6 +115,7 @@ public class Today_Fragment extends Fragment {
         public void run() {
             if (checkInOffice()) {
                 updateTimeElapsed();
+                firstUpdate = false;
             } else {
                 Log.w(TAG, "out of office");
 
@@ -122,6 +125,16 @@ public class Today_Fragment extends Fragment {
                     long totalTime = mSharedPreferences.getLong("TotalTime", 0);
                     if (totalTime == 0) {
                         updateUI(0, true);
+                    }
+                } else {
+                    /*
+                    when you are out-of-office, we do not update the UI. and when you enter onResume()
+                    it does not persist the old paused timings, instead no values are set (looks like reset)
+                    firstUpdate is a boolean which will update the old paused values.
+                     */
+                    if (firstUpdate) {
+                        long totalTime = mSharedPreferences.getLong("TotalTime", 0);
+                        updateUI(totalTime, false);
                     }
                 }
 
@@ -199,8 +212,8 @@ public class Today_Fragment extends Fragment {
                  mLastCheckedOut.setText(checkOut);
              }
          } else {
-             mHoursCompleted.setText("0 hours finished");
-             mTimeRemaining.setText("8 hours remaining");
+             mHoursCompleted.setText("00:00:00 Finished");
+             mTimeRemaining.setText("08:00:00 Remaining");
              mLastCheckedIn.setText("00:00");
              mLastCheckedOut.setText("00:00");
              mInOffice.setText("Out Of Office");

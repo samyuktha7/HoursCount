@@ -125,10 +125,10 @@ public class GeoIntentService extends IntentService {
             //stores lastCheckOut - done everytime GeoFence EXIT triggers.
             DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
             Date date = new Date();
-            String checkInTime = dateFormat.format(date);
-            Log.d(TAG, "checkOutTime "+checkInTime);
+            String checkOutTime = dateFormat.format(date);
+            Log.d(TAG, "checkOutTime "+checkOutTime);
 
-            editor.putString("LastCheckedOut", checkInTime);
+            editor.putString("LastCheckedOut", checkOutTime);
         }
         editor.apply();
 
