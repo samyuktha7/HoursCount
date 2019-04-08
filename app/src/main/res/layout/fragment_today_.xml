@@ -12,13 +12,14 @@
         android:text="HOURS WORKED"
         android:gravity="center_horizontal"
         android:id="@+id/workingHours"
-        android:textSize="20dp"
+        android:textSize="35dp"
         android:layout_gravity="center"/>
 
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
+    android:paddingTop="30dp"
     android:gravity="center_horizontal">
 
     <LinearLayout
@@ -30,7 +31,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="First Check In"
-            android:textSize="22dp"
+            android:textSize="23dp"
             android:paddingTop="50dp"/>
 
         <TextView
@@ -53,7 +54,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Last Checked Out"
-            android:textSize="22dp"
+            android:textSize="23dp"
             android:paddingTop="50dp"/>
 
         <TextView
@@ -73,7 +74,7 @@
         android:id="@+id/timeElapsed"
         android:text="0 completed"
         android:gravity="center_horizontal"
-        android:paddingTop="140dp"
+        android:paddingTop="160dp"
         android:textSize="25dp"
         />
 
@@ -84,7 +85,7 @@
         android:id="@+id/timeLeftOut"
         android:text="8 hours left to finish"
         android:textSize="25dp"
-        android:paddingTop="200dp"
+        android:paddingTop="220dp"
         android:gravity="center_horizontal"/>
 
     <TextView
@@ -92,9 +93,9 @@
         android:layout_height="wrap_content"
         android:id="@+id/InOffice"
         android:text="Out Of Office"
-        android:textSize="25dp"
+        android:textSize="27dp"
         android:gravity="center_horizontal"
-        android:paddingTop="280dp"/>
+        android:paddingTop="300dp"/>
 
     <Button
         android:layout_width="wrap_content"

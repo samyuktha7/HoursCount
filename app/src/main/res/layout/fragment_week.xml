@@ -9,7 +9,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="WEEK SHEETS"
+        android:text="WEEK HOURS"
         android:gravity="center_horizontal"
         android:textSize="40dp"/>
 
@@ -18,9 +18,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="70dp"
-        android:gravity="center">
+        android:gravity="center|center_horizontal">
 
-        <TableRow>
+        <TableRow
+            android:gravity="center_horizontal">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -31,12 +32,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/mondayHours"
-                android:paddingLeft="40dp"
+                android:paddingLeft="50dp"
                 android:text="0"
                 android:textSize="25dp"/>
         </TableRow>
 
-        <TableRow>
+        <TableRow
+            android:gravity="center_horizontal">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -47,12 +49,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/tuesdayHours"
-                android:paddingLeft="40dp"
+                android:paddingLeft="50dp"
                 android:text="0"
                 android:textSize="25dp"/>
         </TableRow>
 
-        <TableRow>
+        <TableRow
+            android:gravity="center_horizontal">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -63,12 +66,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/wednesdayHours"
-                android:paddingLeft="40dp"
+                android:paddingLeft="50dp"
                 android:text="0"
                 android:textSize="25dp"/>
         </TableRow>
 
-        <TableRow>
+        <TableRow
+            android:gravity="center_horizontal">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -79,12 +83,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/thursdayHours"
-                android:paddingLeft="40dp"
+                android:paddingLeft="50dp"
                 android:text="0"
                 android:textSize="25dp"/>
         </TableRow>
 
-        <TableRow>
+        <TableRow
+            android:gravity="center_horizontal">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -95,12 +100,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/fridayHours"
-                android:paddingLeft="40dp"
+                android:paddingLeft="50dp"
                 android:text="0"
                 android:textSize="25dp"/>
         </TableRow>
 
-        <TableRow>
+        <TableRow
+            android:gravity="center_horizontal">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -111,12 +117,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/saturdayHours"
-                android:paddingLeft="40dp"
+                android:paddingLeft="50dp"
                 android:text="0"
                 android:textSize="25dp"/>
         </TableRow>
 
-        <TableRow>
+        <TableRow
+            android:gravity="center_horizontal">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -127,13 +134,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/sundayHours"
-                android:paddingLeft="40dp"
+                android:paddingLeft="50dp"
                 android:text="0"
                 android:textSize="25dp"/>
         </TableRow>
 
         <TableRow
-            android:paddingTop="30dp">
+            android:paddingTop="30dp"
+            android:gravity="center_horizontal">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -144,7 +152,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/totalHours"
-                android:paddingLeft="40dp"
+                android:paddingLeft="50dp"
                 android:text="0"
                 android:textSize="25dp"/>
         </TableRow>
