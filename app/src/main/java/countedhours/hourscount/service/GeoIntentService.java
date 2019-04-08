@@ -1,11 +1,14 @@
 package countedhours.hourscount.service;
 
+import android.app.AlarmManager;
 import android.app.IntentService;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
@@ -18,9 +21,8 @@ import com.google.android.gms.location.GeofencingEvent;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
-import countedhours.hourscount.Database.SqLiteDatabaseHelper;
+import countedhours.hourscount.BroadcastReceivers.pushNotificationAlarm;
 
 import static com.google.android.gms.common.GooglePlayServicesUtil.getErrorString;
 
@@ -73,6 +75,23 @@ public class GeoIntentService extends IntentService {
         SharedPreferences sharedPreferences = getSharedPreferences("TIME", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
+        /*
+        Create a Notification channel, before posting notifications on version shigher than v.26
+        we create a notification channel as soon as the app is created ( for safe use)
+        with a channel ID and importance.
+        It is targeted to higher versions  only.
+         */
+        CharSequence name = "Hourscount";
+        int importance = NotificationManager.IMPORTANCE_DEFAULT;
+        NotificationChannel channel = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            channel = new NotificationChannel("sam", name, importance);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
         if (geofencingEvent.hasError()) {
             String errorMessage = getErrorString(geofencingEvent.getErrorCode());
@@ -107,6 +126,20 @@ public class GeoIntentService extends IntentService {
             long totalTime = sharedPreferences.getLong("TotalTime", 0);
             editor.putLong("TotalTime", totalTime);
             editor.putBoolean("InOffice", true);
+
+            //starts an Alarm to trigger after (8 - total hours) - which will push a notification
+            Intent i = new Intent(this, pushNotificationAlarm.class);
+            PendingIntent sender = PendingIntent.getBroadcast(this, 0,
+                    i, 0);
+
+            // calculates 8-total time to trigger the alarm
+            long currentTime = System.currentTimeMillis();
+            long alarmTriggerTime = currentTime + ((8 * 60 * 60000) - totalTime);
+            Log.d(TAG, "alarm triggered after "+ (((8 * 60 * 60000) - totalTime))/60000 + " minutes");
+
+            // Schedule the alarm. Triggers the alarm at currentTime + after 8 hours time.
+            AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+            am.setExact(AlarmManager.RTC_WAKEUP, alarmTriggerTime, sender);
 
         } else if(geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT || temp == 7) {
             //Handle Toasts

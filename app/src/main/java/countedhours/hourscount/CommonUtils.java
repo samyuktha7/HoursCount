@@ -5,6 +5,9 @@ import android.util.Log;
 import java.util.Calendar;
 import java.util.Date;
 
+/*
+Common methods used by different classes are declared here, to avoid duplicate code
+ */
 public class CommonUtils {
 
     private String TAG = "HC_"+CommonUtils.class.getSimpleName();
