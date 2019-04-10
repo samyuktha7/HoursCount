@@ -36,23 +36,27 @@ public class pushNotificationAlarm extends BroadcastReceiver {
             the time, if its more than or equal to 8 hours in time, then it pushes a notification.
              */
             if (totalTime >= (8 * 60 * 60000)) {
-            // Create an explicit intent for an Activity in your app
-            Intent i = new Intent(context, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, i, 0);
+                // Create an explicit intent for an Activity in your app
+                Intent i = new Intent(context, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, i, 0);
 
-            // Notification builder is used to build and customize your own notification
-            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, "sam");
-            mBuilder.setSmallIcon(R.drawable.ic_launcher_foreground);
-            mBuilder.setContentTitle("Hours Count");
-            mBuilder.setContentText("You finished working 8 hours");
-            mBuilder.setContentIntent(pendingIntent);
-            mBuilder.setAutoCancel(true);
+                // Notification builder is used to build and customize your own notification
+                NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, "sam");
+                mBuilder.setSmallIcon(R.drawable.timer);
+                mBuilder.setContentTitle("Hours Count");
+                mBuilder.setContentText("You finished working 8 hours");
+                mBuilder.setContentIntent(pendingIntent);
+                mBuilder.setAutoCancel(true);
 
-            //For Notification to appear, we call npotify with a unique ID.
-            NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-            mNotificationManager.notify(1, mBuilder.build());
+                //For Notification to appear, we call npotify with a unique ID.
+                NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+                mNotificationManager.notify(1, mBuilder.build());
+            } else {
+                Log.w(TAG, "8 hours not completed, ignoring the notification");
             }
+        } else {
+            Log.w(TAG, "Out of office, ignoring the notification");
         }
     }
 }
