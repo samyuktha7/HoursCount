@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#33334d"
     tools:context=".Activities.ProfileActivity">
 
     <LinearLayout
@@ -17,17 +18,29 @@
             android:layout_width="match_parent"
             android:layout_height= "wrap_content"
             android:textSize="25dp"
+            android:layout_marginTop="20dp"
+            android:textColor="#ffffff"
+            android:gravity="center_horizontal"
             android:text="Enter Office Address" />
 
         <EditText
             android:id="@+id/addressField"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="40dp"
+            android:textColor="#ffffff"
+            android:background="#47476b"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="30dp"/>
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/Enter"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="30dp"
+            android:background="#e67300"
+            android:textColor="#ffffff"
             android:text="EDIT"/>
 
     </LinearLayout>

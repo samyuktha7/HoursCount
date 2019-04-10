@@ -56,7 +56,7 @@ public class Week_Fragment extends Fragment {
         mSun = v.findViewById(R.id.sundayHours);
         mTotal = v.findViewById(R.id.totalHours);
 
-        utils = new CommonUtils();
+        utils = new CommonUtils(this.getActivity());
         return v;
     }
 
@@ -66,7 +66,7 @@ public class Week_Fragment extends Fragment {
         Log.d(TAG, "onResume()");
 
         df = new DecimalFormat();
-        df.setMaximumFractionDigits(2);
+        df.setMaximumFractionDigits(1);
 
         if (this.getActivity() != null) {
             mSharedPreferences = this.getActivity().getSharedPreferences("TIME", Context.MODE_PRIVATE);

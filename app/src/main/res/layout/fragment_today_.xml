@@ -1,25 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#33334d"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     tools:context=".Fragments.Today_Fragment">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="HOURS WORKED"
+        android:layout_height="wrap_content"
+        android:text="WORKED TODAY"
+        android:textColor="#ffffff"
         android:gravity="center_horizontal"
         android:id="@+id/workingHours"
-        android:textSize="35dp"
+        android:textSize="30dp"
         android:layout_gravity="center"/>
 
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:paddingTop="30dp"
+    android:layout_marginTop="10dp"
     android:gravity="center_horizontal">
 
     <LinearLayout
@@ -30,16 +34,19 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="First Check In"
-            android:textSize="23dp"
+            android:text="First CheckIn"
+            android:textColor="#ffffff"
+            android:textSize="20dp"
             android:paddingTop="50dp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="00:00"
+            android:textColor="#ffffff"
             android:textSize="23dp"
             android:paddingTop="5dp"
+            android:layout_gravity="center_horizontal"
             android:id="@+id/LastCheckedIn"/>
     </LinearLayout>
 
@@ -48,13 +55,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingLeft="75dp">
+        android:paddingLeft="30dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Last Checked Out"
-            android:textSize="23dp"
+            android:text="Last CheckOut"
+            android:textColor="#ffffff"
+            android:textSize="20dp"
             android:paddingTop="50dp"/>
 
         <TextView
@@ -63,18 +71,43 @@
             android:text="00:00"
             android:textSize="23dp"
             android:paddingTop="5dp"
+            android:textColor="#ffffff"
             android:id="@+id/LastCheckedOut"/>
     </LinearLayout>
 </LinearLayout>
 
+
+    <com.budiyev.android.circularprogressbar.CircularProgressBar
+        android:layout_width="175dp"
+        android:layout_height="175dp"
+        android:id="@+id/progressBar"
+        android:layout_marginTop="30dp"
+        android:layout_gravity="center_horizontal"
+        app:animateProgress="true"
+        app:backgroundStrokeColor="#52527a"
+        app:backgroundStrokeWidth="10dp"
+        app:drawBackgroundStroke="true"
+        app:foregroundStrokeCap="butt"
+        app:foregroundStrokeColor="#e67300"
+        app:foregroundStrokeWidth="8dp"
+        app:indeterminate="false"
+        app:indeterminateRotationAnimationDuration="1200"
+        app:indeterminateSweepAnimationDuration="600"
+        app:indeterminateMinimumAngle="45"
+        app:maximum="100"
+        app:progress="0"
+        app:progressAnimationDuration="100"
+        app:startAngle="270"
+        />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/timeElapsed"
         android:text="0 completed"
+        android:textColor="#e67300"
         android:gravity="center_horizontal"
-        android:paddingTop="160dp"
+        android:layout_marginTop="40dp"
         android:textSize="25dp"
         />
 
@@ -84,8 +117,9 @@
         android:layout_height="wrap_content"
         android:id="@+id/timeLeftOut"
         android:text="8 hours left to finish"
+        android:textColor="#ffffff"
         android:textSize="25dp"
-        android:paddingTop="220dp"
+        android:layout_marginTop="20dp"
         android:gravity="center_horizontal"/>
 
     <TextView
@@ -93,23 +127,30 @@
         android:layout_height="wrap_content"
         android:id="@+id/InOffice"
         android:text="Out Of Office"
-        android:textSize="27dp"
+        android:textSize="30dp"
+        android:textColor="#e67300"
         android:gravity="center_horizontal"
-        android:paddingTop="300dp"/>
+        android:layout_marginTop="20dp"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Pause"
-        android:id="@+id/pauseButton"
-        android:gravity="center_horizontal"
-        />
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="15dp"
+    android:gravity="center_horizontal"
+    android:orientation="horizontal">
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Start"
-        android:id="@+id/startButton"
-        android:layout_gravity="end"
-        android:gravity="center_horizontal"/>
+        android:id="@+id/startButton" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pause"
+        android:layout_marginLeft="30dp"
+        android:id="@+id/pauseButton"
+        />
 
-</FrameLayout>
+</LinearLayout>
+
+</LinearLayout>

@@ -15,12 +15,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.FrameLayout;
 
 public class MainActivity extends AppCompatActivity {
 
-    BottomNavigationView mBottomNavigation;
-    Fragment mFragment;
-    private String TAG = "MainActivity";
+    private BottomNavigationView mBottomNavigation;
+    private Fragment mFragment;
+    private String TAG = "HC_"+MainActivity.class.getSimpleName();
 
     @Override
     protected void onStart() {
@@ -75,11 +76,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void addOrReplaceFragment(Fragment fragment) {
-        Log.d(TAG, "addOrReplaceFragment");
+        Log.d(TAG, "addOrReplaceFragment "+fragment + "  "+mFragment);
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
         if(mFragment == null) {
-            fragmentTransaction.add(R.id.frameLayout, fragment, "Todays Fragment");
+            fragmentTransaction.add(R.id.frameLayout, fragment);
         } else if (!mFragment.equals(fragment)) {
             fragmentTransaction.replace(R.id.frameLayout , fragment);
         }

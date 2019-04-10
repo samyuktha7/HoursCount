@@ -23,11 +23,6 @@ import countedhours.hourscount.R;
 public class Sheets_Fragment extends Fragment {
 
     private String TAG = "HC_"+Sheets_Fragment.class.getSimpleName();
-
-    private RecyclerView recyclerView;
-    private RecyclerView.LayoutManager layoutManager;
-    private SqLiteDatabaseHelper dbhelper;
-    private Cursor mCursor;
     public List<SheetsData> data;
 
 
@@ -38,14 +33,14 @@ public class Sheets_Fragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_sheets, container, false);
         Log.d(TAG, "onCreateView");
 
-        dbhelper = SqLiteDatabaseHelper.getInstance(this.getActivity());
+        SqLiteDatabaseHelper dbhelper = SqLiteDatabaseHelper.getInstance(this.getActivity());
 
         /*
         Retrieves Information from Sheets database - which stores the week end date and number of
         hours worked during that week. Fetches the cursor and changes into list, which is updated
         to the adapter of recylcer view.
          */
-        mCursor = dbhelper.retrieveSheetsInfo();
+        Cursor mCursor = dbhelper.retrieveSheetsInfo();
         if (mCursor != null) {
             data = new ArrayList<>();
             while (mCursor.moveToNext()) {
@@ -56,9 +51,9 @@ public class Sheets_Fragment extends Fragment {
                 Log.d(TAG, "sheet added");
             }
 
-            recyclerView = (RecyclerView) v.findViewById(R.id.my_recycler_view);
+            RecyclerView recyclerView = (RecyclerView) v.findViewById(R.id.my_recycler_view);
             // use a linear layout manager
-            layoutManager = new LinearLayoutManager(this.getActivity());
+            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this.getActivity());
             recyclerView.setLayoutManager(layoutManager);
 
             MyAdapter adapter = new MyAdapter();
@@ -71,6 +66,12 @@ public class Sheets_Fragment extends Fragment {
     }
 
 
+    /*
+    Setting up the Recycler view.
+        *Each layout has a seperate layout xml file. which is initialized.
+        *Number of views in the list are also initialized
+        *Every view is then set with values.
+     */
     public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyviewHolder> {
 
         @NonNull

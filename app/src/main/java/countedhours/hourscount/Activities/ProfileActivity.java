@@ -34,6 +34,7 @@ import java.util.UUID;
 
 import countedhours.hourscount.BroadcastReceivers.AlarmReceiver;
 import countedhours.hourscount.BroadcastReceivers.WeeklyReceiver;
+import countedhours.hourscount.CommonUtils;
 import countedhours.hourscount.R;
 import countedhours.hourscount.service.GeoIntentService;
 
@@ -49,6 +50,7 @@ public class ProfileActivity extends AppCompatActivity {
     private GeofencingClient mGeofencingClient;
     private SharedPreferences.Editor mEditor;
     private String temp;
+    private CommonUtils mUtils;
 
 
     @Override
@@ -66,7 +68,9 @@ public class ProfileActivity extends AppCompatActivity {
         super.onResume();
         Log.d(TAG, "onResume");
 
+        mUtils = CommonUtils.getInstance(ProfileActivity.this);
         sharedPreferences = getSharedPreferences("ADDRESS_INFO", Context.MODE_PRIVATE);
+
         mAddress = getAddressFromSharedPreferences();
         if (mAddress != null) {
             Log.d(TAG, "address found in shared preferences");
@@ -137,7 +141,7 @@ public class ProfileActivity extends AppCompatActivity {
             setAddressField(mAddress, false, false);
             // this code should be here, not in onResume().
 
-            resetEverything();
+            mUtils.resetEverything(ProfileActivity.this, true);
             //startGeoFence
             startGeoFence();
             startAlarmToPerformOp();
@@ -147,28 +151,6 @@ public class ProfileActivity extends AppCompatActivity {
             storeAddressInSharedPreferences(null);
             setAddressField(null, true, true);
         }
-    }
-
-    /*
-    Resets all the Values in UI, on a new day or when the address is changed
-     */
-    private void resetEverything() {
-        Log.d(TAG, "resetEverything()");
-        SharedPreferences sharedPreferences = this.getSharedPreferences("TIME", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("LastCheckedIn", null);
-        editor.putString("LastCheckedOut", null);
-        editor.putLong("StartTime", 0);
-        editor.putLong("TotalTime", 0);
-        editor.putBoolean("InOffice", false);
-        editor.putFloat("TotalWeekTime", 0);
-        editor.putBoolean("reset", true);
-
-        //clears all days values in a week
-        for (int i = 1; i <=7; i++) {
-            editor.putFloat(String.valueOf(i), 0);
-        }
-        editor.apply();
     }
 
     private void startGeoFence() {

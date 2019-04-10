@@ -19,7 +19,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.ProfileActivity" />
+        <activity android:name=".Activities.ProfileActivity"
+            android:parentActivityName=".Activities.MainActivity"/>
 
         <!-- <receiver -->
         <!-- android:name=".Receivers.InitReceiver" -->
@@ -45,7 +46,16 @@
         <receiver
             android:name=".BroadcastReceivers.pushNotificationAlarm"
             android:enabled="true"
-            android:exported="true"></receiver>
+            android:exported="true" />
+        <receiver android:name=".HoursCountWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/hours_count_widget_info" />
+        </receiver>
     </application>
 
 </manifest>

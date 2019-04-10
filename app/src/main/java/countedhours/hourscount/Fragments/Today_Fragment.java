@@ -12,6 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.budiyev.android.circularprogressbar.CircularProgressBar;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -27,6 +30,8 @@ public class Today_Fragment extends Fragment {
 
     private TextView mTimeRemaining, mHoursCompleted, mInOffice, mLastCheckedIn, mLastCheckedOut;
     private Button mPauseButton, mStartButton;
+    private CircularProgressBar mProgressBar;
+
     private String TAG = "HC_"+Today_Fragment.class.getSimpleName();
     private DateFormat formatter;
     private SharedPreferences mSharedPreferences;
@@ -53,6 +58,8 @@ public class Today_Fragment extends Fragment {
         mLastCheckedOut = v.findViewById(R.id.LastCheckedOut);
         mPauseButton = v.findViewById(R.id.pauseButton);
         mStartButton = v.findViewById(R.id.startButton);
+        mProgressBar = v.findViewById(R.id.progressBar);
+
         return v;
     }
 
@@ -197,12 +204,21 @@ public class Today_Fragment extends Fragment {
         Log.d(TAG, "updateUI() reset = "+reset);
          if (!reset) {
              //setting the time Elapsed
-             mHoursCompleted.setText(formatter.format(new Date(totalTime)) + " Finished");
+             mHoursCompleted.setText(formatter.format(new Date(totalTime)) + "  Finished");
 
              //Calculating and setting the time Remaining
-             long timeToWork = ((8 * 60 * 60000) - totalTime);
-             mTimeRemaining.setText(formatter.format(new Date(timeToWork)) + " Remaining ");
+             long eightHoursADay = 8 * 60 * 60000;
+             if (eightHoursADay >= totalTime) {
+                 long timeToWork = ((8 * 60 * 60000) - totalTime);
+                 mTimeRemaining.setText(formatter.format(new Date(timeToWork)) + " Remaining ");
+             } else {
+                 Log.d(TAG, "8 hours finished. No need to calculate time remaining");
+                 mTimeRemaining.setText("08:00:00 Remaining");
+             }
 
+             float percentage = (((float)totalTime * 100)/eightHoursADay);
+             Log.d(TAG, "percentage on circular progress bar "+percentage);
+             mProgressBar.setProgress(percentage);
 
              checkIn = mSharedPreferences.getString("LastCheckedIn", null);
              if (checkIn != null) {
@@ -219,6 +235,7 @@ public class Today_Fragment extends Fragment {
              mLastCheckedIn.setText("00:00");
              mLastCheckedOut.setText("00:00");
              mInOffice.setText("Out Of Office");
+             mProgressBar.setProgress(0);
 
              //Notify reset complete
              SharedPreferences.Editor editor = mSharedPreferences.edit();

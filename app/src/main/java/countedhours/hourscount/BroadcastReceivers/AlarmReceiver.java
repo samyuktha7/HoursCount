@@ -21,7 +21,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, Intent intent) {
         Log.d(TAG, "onReceive()");
-        mUtils = new CommonUtils();
+        mUtils = CommonUtils.getInstance(context);
         SharedPreferences mSharedPreferences = context.getSharedPreferences("TIME", Context.MODE_PRIVATE);
         long totalTime = mSharedPreferences.getLong("TotalTime",-1);
         if (totalTime != -1) {
@@ -38,21 +38,7 @@ public class AlarmReceiver extends BroadcastReceiver {
             editor.putFloat("TotalWeekTime", totalWeekTime);
             Log.d(TAG, "totalWeekTime = "+totalWeekTime);
 
-            //resets
-            //clears the startTime and totalTime to calculate for next day.
-            editor.putLong("StartTime", 0);
-            editor.putLong("TotalTime", 0);
-
-            //clearsFirstCheckIn and LastCheckout
-            editor.putString("LastCheckedOut", null);
-
-            //clears InOffice boolean
-            editor.putBoolean("InOffice", false);
-
-            //updates the UI to reset everything
-            editor.putBoolean("reset", true);
-
-            editor.apply();
+            mUtils.resetEverything(context, false);
         } else {
             Log.d(TAG, "Might be a non-working-day");
         }

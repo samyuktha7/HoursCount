@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#33334d"
     tools:context=".Fragments.Week_Fragment">
 
     <!-- TODO: Update blank fragment layout -->
@@ -10,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text="WEEK HOURS"
+        android:textColor="#ffffff"
         android:gravity="center_horizontal"
         android:textSize="40dp"/>
 
@@ -17,7 +19,7 @@
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="70dp"
+        android:paddingTop="80dp"
         android:gravity="center|center_horizontal">
 
         <TableRow
@@ -26,6 +28,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="MONDAY"
+                android:textColor="#ffffff"
                 android:textSize="25dp"/>
 
             <TextView
@@ -34,6 +37,7 @@
                 android:id="@+id/mondayHours"
                 android:paddingLeft="50dp"
                 android:text="0"
+                android:textColor="#ffffff"
                 android:textSize="25dp"/>
         </TableRow>
 
@@ -43,6 +47,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="TUESDAY"
+                android:textColor="#ffffff"
                 android:textSize="25dp"/>
 
             <TextView
@@ -51,6 +56,7 @@
                 android:id="@+id/tuesdayHours"
                 android:paddingLeft="50dp"
                 android:text="0"
+                android:textColor="#ffffff"
                 android:textSize="25dp"/>
         </TableRow>
 
@@ -60,6 +66,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="WEDNESDAY"
+                android:textColor="#ffffff"
                 android:textSize="25dp"/>
 
             <TextView
@@ -68,6 +75,7 @@
                 android:id="@+id/wednesdayHours"
                 android:paddingLeft="50dp"
                 android:text="0"
+                android:textColor="#ffffff"
                 android:textSize="25dp"/>
         </TableRow>
 
@@ -77,6 +85,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="THURSDAY"
+                android:textColor="#ffffff"
                 android:textSize="25dp"/>
 
             <TextView
@@ -85,6 +94,7 @@
                 android:id="@+id/thursdayHours"
                 android:paddingLeft="50dp"
                 android:text="0"
+                android:textColor="#ffffff"
                 android:textSize="25dp"/>
         </TableRow>
 
@@ -94,6 +104,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="FRIDAY"
+                android:textColor="#ffffff"
                 android:textSize="25dp"/>
 
             <TextView
@@ -102,6 +113,7 @@
                 android:id="@+id/fridayHours"
                 android:paddingLeft="50dp"
                 android:text="0"
+                android:textColor="#ffffff"
                 android:textSize="25dp"/>
         </TableRow>
 
@@ -111,6 +123,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="SATURDAY"
+                android:textColor="#ffffff"
                 android:textSize="25dp"/>
 
             <TextView
@@ -119,6 +132,7 @@
                 android:id="@+id/saturdayHours"
                 android:paddingLeft="50dp"
                 android:text="0"
+                android:textColor="#ffffff"
                 android:textSize="25dp"/>
         </TableRow>
 
@@ -128,6 +142,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="SUNDAY"
+                android:textColor="#ffffff"
                 android:textSize="25dp"/>
 
             <TextView
@@ -136,6 +151,7 @@
                 android:id="@+id/sundayHours"
                 android:paddingLeft="50dp"
                 android:text="0"
+                android:textColor="#ffffff"
                 android:textSize="25dp"/>
         </TableRow>
 
@@ -146,6 +162,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="TOTAL HOURS"
+                android:textColor="#ffffff"
                 android:textSize="25dp"/>
 
             <TextView
@@ -154,6 +171,7 @@
                 android:id="@+id/totalHours"
                 android:paddingLeft="50dp"
                 android:text="0"
+                android:textColor="#ffffff"
                 android:textSize="25dp"/>
         </TableRow>
     </TableLayout>

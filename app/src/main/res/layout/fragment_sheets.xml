@@ -4,12 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="#33334d"
     tools:context=".Fragments.Sheets_Fragment">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="SHEETS"
+        android:textColor="#ffffff"
         android:gravity="center_horizontal"
         android:textSize="40dp"/>
 
@@ -21,6 +23,5 @@
         android:paddingLeft="25dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-
 
 </LinearLayout>
