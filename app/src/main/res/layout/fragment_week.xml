@@ -1,25 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#33334d"
     tools:context=".Fragments.Week_Fragment">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:text="WEEK HOURS"
         android:textColor="#ffffff"
         android:gravity="center_horizontal"
         android:textSize="40dp"/>
 
+    <com.budiyev.android.circularprogressbar.CircularProgressBar
+        android:layout_width="175dp"
+        android:layout_height="175dp"
+        android:id="@+id/weekProgress"
+        android:layout_marginTop="30dp"
+        android:layout_gravity="center_horizontal"
+        app:animateProgress="true"
+        app:backgroundStrokeColor="#52527a"
+        app:backgroundStrokeWidth="10dp"
+        app:drawBackgroundStroke="true"
+        app:foregroundStrokeCap="butt"
+        app:foregroundStrokeColor="#e67300"
+        app:foregroundStrokeWidth="8dp"
+        app:indeterminate="false"
+        app:indeterminateRotationAnimationDuration="1200"
+        app:indeterminateSweepAnimationDuration="600"
+        app:indeterminateMinimumAngle="45"
+        app:maximum="100"
+        app:progress="0"
+        app:progressAnimationDuration="100"
+        app:startAngle="270"
+        />
+
 
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="80dp"
+        android:layout_marginTop="30dp"
         android:gravity="center|center_horizontal">
 
         <TableRow
@@ -178,4 +203,4 @@
 
 
 
-</FrameLayout>
+</LinearLayout>

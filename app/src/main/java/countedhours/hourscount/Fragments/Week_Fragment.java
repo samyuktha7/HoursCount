@@ -12,6 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.budiyev.android.circularprogressbar.CircularProgressBar;
+
 import java.text.DecimalFormat;
 
 import countedhours.hourscount.CommonUtils;
@@ -31,6 +33,7 @@ public class Week_Fragment extends Fragment {
     private String TAG = "HC_"+Week_Fragment.class.getSimpleName();
 
     private TextView mMon, mTue, mWed, mThur, mFri, mSat, mSun, mTotal;
+    private CircularProgressBar mWeekProgress;
 
     private int mDayOfTheWeek;
     private CommonUtils utils;
@@ -55,6 +58,8 @@ public class Week_Fragment extends Fragment {
         mSat = v.findViewById(R.id.saturdayHours);
         mSun = v.findViewById(R.id.sundayHours);
         mTotal = v.findViewById(R.id.totalHours);
+
+        mWeekProgress = (CircularProgressBar) v.findViewById(R.id.weekProgress);
 
         utils = new CommonUtils(this.getActivity());
         return v;
@@ -157,6 +162,10 @@ public class Week_Fragment extends Fragment {
         //updateUI - Weeks
         mTotal.setText(df.format(mTotalWeeksTime));
 
+        //updateCircularUI
+        long fortyHoursPerWeek = 40 * 60 * 60000;
+        float percentage = ((((float) mTotalWeeksTime) * 100) / fortyHoursPerWeek );
+        mWeekProgress.setProgress(percentage);
     }
 
     /*
