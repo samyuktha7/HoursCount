@@ -222,15 +222,18 @@ public class Today_Fragment extends Fragment {
              if (eightHoursADay >= totalTime) {
                  long timeToWork = ((8 * 60 * 60000) - totalTime);
                  mTimeRemaining.setText(formatter.format(new Date(timeToWork)) + " Remaining ");
+
+                 float percentage = (((float)totalTime * 100)/eightHoursADay);
+                 Log.d(TAG, "percentage on circular progress bar "+percentage);
+                 mProgressBar.setProgress(percentage);
              } else {
                  Log.d(TAG, "8 hours finished. No need to calculate time remaining");
                  mTimeRemaining.setText("OVER TIME");
                  mTimeRemaining.setTextColor(getResources().getColor(R.color.secondary));
+                 mProgressBar.setProgress(100);
              }
 
-             float percentage = (((float)totalTime * 100)/eightHoursADay);
-             Log.d(TAG, "percentage on circular progress bar "+percentage);
-             mProgressBar.setProgress(percentage);
+
 
              String checkIn = mSharedPreferences.getString(mUtils.SP_FIRSTCHECKIN, null);
              if (checkIn != null) {

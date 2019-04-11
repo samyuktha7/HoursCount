@@ -159,7 +159,11 @@ public class Week_Fragment extends Fragment {
             setTodaysValue(mDayOfTheWeek, mTodaysUpdatedTime);
         }
 
+        float weekly = 40;
         //updateUI - Weeks
+        if (mTotalWeeksTime > weekly) {
+            mTotal.setTextColor(getResources().getColor(R.color.secondary));
+        }
         mTotal.setText(df.format(mTotalWeeksTime));
 
         //updateCircularUI - total weeks time in 40 hours
@@ -175,27 +179,49 @@ public class Week_Fragment extends Fragment {
     private void setTodaysValue(int i, float temp) {
         Log.d(TAG, "setTodaysValue(): updating  = "+i+"  temp = "+temp);
         String time = df.format(temp);
+        float daily = 8;
         switch (i) {
             case 1 :
                 mSun.setText(time);
+                if (temp > daily) {
+                    mSun.setTextColor(getResources().getColor(R.color.secondary));
+                }
                 break;
             case 2 :
                 mMon.setText(time);
+                if (temp > daily) {
+                    mMon.setTextColor(getResources().getColor(R.color.secondary));
+                }
                 break;
             case 3 :
                 mTue.setText(time);
+                if (temp > daily) {
+                    mTue.setTextColor(getResources().getColor(R.color.secondary));
+                }
                 break;
             case 4 :
                 mWed.setText(time);
+                if (temp > daily) {
+                    mWed.setTextColor(getResources().getColor(R.color.secondary));
+                }
                 break;
             case 5 :
                 mThur.setText(time);
+                if (temp > daily) {
+                    mThur.setTextColor(getResources().getColor(R.color.secondary));
+                }
                 break;
             case 6 :
                 mFri.setText(time);
+                if (temp > daily) {
+                    mFri.setTextColor(getResources().getColor(R.color.secondary));
+                }
                 break;
             case 7 :
                 mSat.setText(time);
+                if (temp > daily) {
+                    mSat.setTextColor(getResources().getColor(R.color.secondary));
+                }
                 break;
         }
     }
