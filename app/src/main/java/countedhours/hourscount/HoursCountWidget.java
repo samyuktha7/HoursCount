@@ -19,15 +19,19 @@ import java.util.TimeZone;
 public class HoursCountWidget extends AppWidgetProvider {
 
 
+
+
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
 
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.hours_count_widget);
+        CommonUtils mUtils = CommonUtils.getInstance(context);
 
-        SharedPreferences sharedPreferences = context.getSharedPreferences("TIME", Context.MODE_PRIVATE);
-        long startTime = sharedPreferences.getLong("StartTime", 0);
-        long totalTime = sharedPreferences.getLong("TotalTime", 0);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(mUtils.SP_NAME_TIME, Context.MODE_PRIVATE);
+
+        long startTime = sharedPreferences.getLong(mUtils.SP_STARTTIME, 0);
+        long totalTime = sharedPreferences.getLong(mUtils.SP_TOTALTIME, 0);
         if (startTime != 0) {
             long bufferTime = System.currentTimeMillis() - startTime;
             totalTime = totalTime + bufferTime;

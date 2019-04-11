@@ -10,6 +10,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import countedhours.hourscount.CommonUtils;
 import countedhours.hourscount.Database.SqLiteDatabaseHelper;
 
 /*
@@ -23,16 +24,18 @@ public class WeeklyReceiver extends BroadcastReceiver {
 
     private String TAG = WeeklyReceiver.class.getSimpleName();
     private SharedPreferences mSharedPreferences;
+    private CommonUtils mUtils;
 
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d(TAG, "onReceive()");
 
+        mUtils = CommonUtils.getInstance(context);
         SqLiteDatabaseHelper dbHelper = SqLiteDatabaseHelper.getInstance(context);
         mSharedPreferences = context.getSharedPreferences("TIME", Context.MODE_PRIVATE);
 
         //get the totalWeekTime (float) from shared preferences.
-        float totalWeekTime = mSharedPreferences.getFloat("TotalWeekTime", 0);
+        float totalWeekTime = mSharedPreferences.getFloat(mUtils.SP_TOTALWEEKTIME, 0);
 
         //get WeekEndDate (i.e., Todays Date)
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
@@ -52,7 +55,7 @@ public class WeeklyReceiver extends BroadcastReceiver {
 
         // clear the totalWeekTime (float) value in  shared preferences.
         SharedPreferences.Editor editor = mSharedPreferences.edit();
-        editor.putFloat("TotalWeekTime", 0);
+        editor.putFloat(mUtils.SP_TOTALWEEKTIME, 0);
 
         //clears all days values in a week
         for (int i = 1; i <=7; i++) {

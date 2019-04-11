@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import countedhours.hourscount.BroadcastReceivers.pushNotificationAlarm;
+import countedhours.hourscount.CommonUtils;
 
 import static com.google.android.gms.common.GooglePlayServicesUtil.getErrorString;
 
@@ -32,7 +33,8 @@ This Intent Service is triggered by transition through GEOFENCE. It enters onHan
  */
 public class GeoIntentService extends IntentService {
 
-    private String TAG = "HC_"+GeoIntentService.class.getSimpleName();;
+    private String TAG = "HC_"+GeoIntentService.class.getSimpleName();
+    private CommonUtils mUtils;
 
     public GeoIntentService() {
         super(GeoIntentService.class.getSimpleName());
@@ -72,6 +74,7 @@ public class GeoIntentService extends IntentService {
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         Log.d(TAG, "onHandleIntent() ");
+        mUtils = CommonUtils.getInstance(getApplicationContext());
         SharedPreferences sharedPreferences = getSharedPreferences("TIME", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -110,22 +113,22 @@ public class GeoIntentService extends IntentService {
             toast("Geofence Entered", Toast.LENGTH_SHORT);
 
             //Stores the LastCheckInValue - only done once a day
-            String lastChecked = sharedPreferences.getString("LastCheckedIn", null);
+            String lastChecked = sharedPreferences.getString(mUtils.SP_FIRSTCHECKIN, null);
             if (lastChecked == null) {
                 DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
                 Date date = new Date();
                 String checkInTime = dateFormat.format(date);
                 Log.d(TAG, "todays time  "+checkInTime);
 
-                editor.putString("LastCheckedIn", checkInTime);
+                editor.putString(mUtils.SP_FIRSTCHECKIN, checkInTime);
             }
 
             //Enter values into SharedPreferences
             //start time = currentmilliseconds
-            editor.putLong("StartTime", System.currentTimeMillis());
-            long totalTime = sharedPreferences.getLong("TotalTime", 0);
-            editor.putLong("TotalTime", totalTime);
-            editor.putBoolean("InOffice", true);
+            editor.putLong(mUtils.SP_STARTTIME, System.currentTimeMillis());
+            long totalTime = sharedPreferences.getLong(mUtils.SP_TOTALTIME, 0);
+            editor.putLong(mUtils.SP_TOTALTIME, totalTime);
+            editor.putBoolean(mUtils.SP_InOFFICE, true);
 
             //starts an Alarm to trigger after (8 - total hours) - which will push a notification
             Intent i = new Intent(this, pushNotificationAlarm.class);
@@ -149,11 +152,11 @@ public class GeoIntentService extends IntentService {
             //Enter values into shared preferences
             //totalTime = totalTime + CurrentTime - startTime;
             //start time = 0
-            long startTime = sharedPreferences.getLong("StartTime", 0);
-            long totalTime = sharedPreferences.getLong("TotalTime", 0);
-            editor.putLong("TotalTime", (totalTime + (System.currentTimeMillis() - startTime)));
-            editor.putLong("StartTime", 0);
-            editor.putBoolean("InOffice", false);
+            long startTime = sharedPreferences.getLong(mUtils.SP_STARTTIME, 0);
+            long totalTime = sharedPreferences.getLong(mUtils.SP_TOTALTIME, 0);
+            editor.putLong(mUtils.SP_TOTALTIME, (totalTime + (System.currentTimeMillis() - startTime)));
+            editor.putLong(mUtils.SP_STARTTIME, 0);
+            editor.putBoolean(mUtils.SP_InOFFICE, false);
 
             //stores lastCheckOut - done everytime GeoFence EXIT triggers.
             DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
@@ -161,7 +164,7 @@ public class GeoIntentService extends IntentService {
             String checkOutTime = dateFormat.format(date);
             Log.d(TAG, "checkOutTime "+checkOutTime);
 
-            editor.putString("LastCheckedOut", checkOutTime);
+            editor.putString(mUtils.SP_LASTCHECKOUT, checkOutTime);
         }
         editor.apply();
 

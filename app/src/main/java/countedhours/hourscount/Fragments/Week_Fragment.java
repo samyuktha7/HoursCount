@@ -36,7 +36,7 @@ public class Week_Fragment extends Fragment {
     private CircularProgressBar mWeekProgress;
 
     private int mDayOfTheWeek;
-    private CommonUtils utils;
+    private CommonUtils mUtils;
     private SharedPreferences mSharedPreferences;
     private SharedPreferences.Editor mEditor;
     private boolean firstUpdate;
@@ -61,7 +61,7 @@ public class Week_Fragment extends Fragment {
 
         mWeekProgress = (CircularProgressBar) v.findViewById(R.id.weekProgress);
 
-        utils = new CommonUtils(this.getActivity());
+        mUtils = new CommonUtils(this.getActivity());
         return v;
     }
 
@@ -74,10 +74,10 @@ public class Week_Fragment extends Fragment {
         df.setMaximumFractionDigits(1);
 
         if (this.getActivity() != null) {
-            mSharedPreferences = this.getActivity().getSharedPreferences("TIME", Context.MODE_PRIVATE);
+            mSharedPreferences = this.getActivity().getSharedPreferences(mUtils.SP_NAME_TIME, Context.MODE_PRIVATE);
 
             //gets the day of the week
-            mDayOfTheWeek = utils.getDayOfTheWeek();
+            mDayOfTheWeek = mUtils.getDayOfTheWeek();
 
             firstUpdate = true;
             //updates Todays Values
@@ -99,8 +99,8 @@ public class Week_Fragment extends Fragment {
         mEditor = mSharedPreferences.edit();
 
         //calculate and updates Todays time
-        long startTime = mSharedPreferences.getLong("StartTime", 0);
-        long totalTime = mSharedPreferences.getLong("TotalTime", 0);
+        long startTime = mSharedPreferences.getLong(mUtils.SP_STARTTIME, 0);
+        long totalTime = mSharedPreferences.getLong(mUtils.SP_TOTALTIME, 0);
         if (startTime != 0) {
             long bufferTime = System.currentTimeMillis() - startTime;
             totalTime = totalTime + bufferTime;
@@ -114,7 +114,7 @@ public class Week_Fragment extends Fragment {
         mEditor.putFloat(String.valueOf(mDayOfTheWeek), mTodaysUpdatedTime);
 
         //Calculate and updates weeks Time
-        mTotalWeeksTime = mSharedPreferences.getFloat("TotalWeekTime", 0);
+        mTotalWeeksTime = mSharedPreferences.getFloat(mUtils.SP_TOTALWEEKTIME, 0);
         if (totalTime != 0) {
             mTotalWeeksTime = mTotalWeeksTime + mTodaysUpdatedTime;
         }
@@ -205,7 +205,7 @@ public class Week_Fragment extends Fragment {
     Only updates the UI values, if we are in Office.
      */
     private boolean checkInOffice() {
-        boolean InOffice = mSharedPreferences.getBoolean("InOffice", false);
+        boolean InOffice = mSharedPreferences.getBoolean(mUtils.SP_InOFFICE, false);
         Log.d(TAG, "checkInOffice "+InOffice);
         return InOffice;
     }

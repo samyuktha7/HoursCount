@@ -23,6 +23,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import countedhours.hourscount.Activities.ProfileActivity;
+import countedhours.hourscount.CommonUtils;
 import countedhours.hourscount.R;
 import countedhours.hourscount.service.GeoIntentService;
 
@@ -37,6 +38,7 @@ public class Today_Fragment extends Fragment {
     private DateFormat formatter;
     private SharedPreferences mSharedPreferences;
     private Handler updateTimeHandler = new Handler();
+    private CommonUtils mUtils;
 
     private boolean inOffice;
     private boolean alreadyStarted = false;
@@ -77,13 +79,14 @@ public class Today_Fragment extends Fragment {
 
         //If the context is not null, get Shared Preferences.
         if (this.getActivity() != null) {
+            mUtils = CommonUtils.getInstance(this.getActivity());
 
             //Display Today's Date
             Date c = Calendar.getInstance().getTime();
             SimpleDateFormat df = new SimpleDateFormat("MMMM dd yyyy , EEEE");
             mToday.setText(df.format(c));
 
-            mSharedPreferences = this.getActivity().getSharedPreferences("TIME", Context.MODE_PRIVATE);
+            mSharedPreferences = this.getActivity().getSharedPreferences(mUtils.SP_NAME_TIME, Context.MODE_PRIVATE);
             if (mSharedPreferences != null) {
 
                 //start the UI handler to update every second.
@@ -137,9 +140,9 @@ public class Today_Fragment extends Fragment {
                 Log.w(TAG, "out of office");
 
                 // reset during updateThreadHandler will update the UI with reset values.
-                boolean resetEverything = mSharedPreferences.getBoolean("reset", false);
+                boolean resetEverything = mSharedPreferences.getBoolean(mUtils.SP_RESET, false);
                 if (resetEverything) {
-                    long totalTime = mSharedPreferences.getLong("TotalTime", 0);
+                    long totalTime = mSharedPreferences.getLong(mUtils.SP_TOTALTIME, 0);
                     if (totalTime == 0) {
                         updateUI(0, true);
                     }
@@ -150,13 +153,13 @@ public class Today_Fragment extends Fragment {
                     firstUpdate is a boolean which will update the old paused values.
                      */
                     if (firstUpdate) {
-                        long totalTime = mSharedPreferences.getLong("TotalTime", 0);
+                        long totalTime = mSharedPreferences.getLong(mUtils.SP_TOTALTIME, 0);
                         updateUI(totalTime, false);
                     }
                 }
 
                 //update checkOutTime always
-                checkOut = mSharedPreferences.getString("LastCheckedOut", null);
+                checkOut = mSharedPreferences.getString(mUtils.SP_LASTCHECKOUT, null);
                 if (checkOut != null) {
                     mLastCheckedOut.setText(checkOut);
                 }
@@ -175,8 +178,8 @@ public class Today_Fragment extends Fragment {
     private void updateTimeElapsed() {
         Log.d(TAG, "updateTimeElapsed()");
 
-        long startTime = mSharedPreferences.getLong("StartTime", 0);
-        long totalTime = mSharedPreferences.getLong("TotalTime", 0);
+        long startTime = mSharedPreferences.getLong(mUtils.SP_STARTTIME, 0);
+        long totalTime = mSharedPreferences.getLong(mUtils.SP_TOTALTIME, 0);
         if (startTime != 0) {
             long bufferTime = System.currentTimeMillis() - startTime;
             totalTime = totalTime + bufferTime;
@@ -192,7 +195,7 @@ public class Today_Fragment extends Fragment {
     checks whether we are in office and updates UI
      */
     private boolean checkInOffice() {
-        boolean check = mSharedPreferences.getBoolean("InOffice", false);
+        boolean check = mSharedPreferences.getBoolean(mUtils.SP_InOFFICE, false);
         if (inOffice != check) {
             inOffice = check;
             if (inOffice) {
@@ -221,19 +224,20 @@ public class Today_Fragment extends Fragment {
                  mTimeRemaining.setText(formatter.format(new Date(timeToWork)) + " Remaining ");
              } else {
                  Log.d(TAG, "8 hours finished. No need to calculate time remaining");
-                 mTimeRemaining.setText("08:00:00 Remaining");
+                 mTimeRemaining.setText("OVER TIME");
+                 mTimeRemaining.setTextColor(getResources().getColor(R.color.secondary));
              }
 
              float percentage = (((float)totalTime * 100)/eightHoursADay);
              Log.d(TAG, "percentage on circular progress bar "+percentage);
              mProgressBar.setProgress(percentage);
 
-             String checkIn = mSharedPreferences.getString("LastCheckedIn", null);
+             String checkIn = mSharedPreferences.getString(mUtils.SP_FIRSTCHECKIN, null);
              if (checkIn != null) {
                  mLastCheckedIn.setText(checkIn);
              }
 
-             checkOut = mSharedPreferences.getString("LastCheckedOut", null);
+             checkOut = mSharedPreferences.getString(mUtils.SP_LASTCHECKOUT, null);
              if (checkOut != null) {
                  mLastCheckedOut.setText(checkOut);
              }
@@ -247,7 +251,7 @@ public class Today_Fragment extends Fragment {
 
              //Notify reset complete
              SharedPreferences.Editor editor = mSharedPreferences.edit();
-             editor.putBoolean("reset", false);
+             editor.putBoolean(mUtils.SP_RESET, false);
              editor.apply();
          }
     }

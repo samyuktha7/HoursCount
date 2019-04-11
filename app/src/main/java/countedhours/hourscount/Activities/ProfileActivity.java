@@ -70,7 +70,7 @@ public class ProfileActivity extends AppCompatActivity {
         Log.d(TAG, "onResume");
 
         mUtils = CommonUtils.getInstance(ProfileActivity.this);
-        sharedPreferences = getSharedPreferences("ADDRESS_INFO", Context.MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences(mUtils.SP_NAME_ADDRESS, Context.MODE_PRIVATE);
 
         mAddress = getAddressFromSharedPreferences();
         if (mAddress != null) {
@@ -270,13 +270,13 @@ public class ProfileActivity extends AppCompatActivity {
     public void storeAddressInSharedPreferences(String address) {
         Log.d(TAG, "storeAddressInSharedPreferences " + address);
         mEditor = sharedPreferences.edit();
-        mEditor.putString("Address", address);
+        mEditor.putString(mUtils.SP_OFFICEADDRESS, address);
         mEditor.apply();
     }
 
     public String getAddressFromSharedPreferences() {
         Log.d(TAG, "getAddressFromSharedPreferences() ");
-        return sharedPreferences.getString("Address", null);
+        return sharedPreferences.getString(mUtils.SP_OFFICEADDRESS, null);
     }
 
     public void setAddressField(String address, boolean enabled, boolean save) {

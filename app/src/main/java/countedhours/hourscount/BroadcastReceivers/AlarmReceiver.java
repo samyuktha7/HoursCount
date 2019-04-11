@@ -22,8 +22,8 @@ public class AlarmReceiver extends BroadcastReceiver {
     public void onReceive(final Context context, Intent intent) {
         Log.d(TAG, "onReceive()");
         mUtils = CommonUtils.getInstance(context);
-        SharedPreferences mSharedPreferences = context.getSharedPreferences("TIME", Context.MODE_PRIVATE);
-        long totalTime = mSharedPreferences.getLong("TotalTime",-1);
+        SharedPreferences mSharedPreferences = context.getSharedPreferences(mUtils.SP_NAME_TIME, Context.MODE_PRIVATE);
+        long totalTime = mSharedPreferences.getLong(mUtils.SP_TOTALTIME,-1);
         if (totalTime != -1) {
             //Stores the total time in day_of_week field.
             int day_of_week = mUtils.getDayOfTheWeek();
@@ -32,10 +32,10 @@ public class AlarmReceiver extends BroadcastReceiver {
             editor.putFloat(String.valueOf(day_of_week), ((float) totalTime / (60 * 60000)));
 
             //stores the totalTime for Week (In Hours)
-            float totalWeekTime = mSharedPreferences.getFloat("TotalWeekTime", 0);
+            float totalWeekTime = mSharedPreferences.getFloat(mUtils.SP_TOTALWEEKTIME, 0);
             float totalTimeInHours = ((float) totalTime / (60 * 60000));
             totalWeekTime = totalWeekTime + totalTimeInHours;
-            editor.putFloat("TotalWeekTime", totalWeekTime);
+            editor.putFloat(mUtils.SP_TOTALWEEKTIME, totalWeekTime);
             Log.d(TAG, "totalWeekTime = "+totalWeekTime);
 
             mUtils.resetEverything(context, false);

@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import countedhours.hourscount.Activities.MainActivity;
+import countedhours.hourscount.CommonUtils;
 import countedhours.hourscount.R;
 
 /*
@@ -18,14 +19,16 @@ public class pushNotificationAlarm extends BroadcastReceiver {
 
     private String TAG = "HC_"+pushNotificationAlarm.class.getSimpleName();
     private SharedPreferences mSharedPreferences;
+    private CommonUtils mUtils;
 
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d(TAG, "onRecieve()");
+        mUtils = CommonUtils.getInstance(context);
 
-        mSharedPreferences = context.getSharedPreferences("TIME", Context.MODE_PRIVATE);
-        long startTime = mSharedPreferences.getLong("StartTime", 0);
-        long totalTime = mSharedPreferences.getLong("TotalTime", 0);
+        mSharedPreferences = context.getSharedPreferences(mUtils.SP_NAME_TIME, Context.MODE_PRIVATE);
+        long startTime = mSharedPreferences.getLong(mUtils.SP_STARTTIME, 0);
+        long totalTime = mSharedPreferences.getLong(mUtils.SP_TOTALTIME, 0);
         if (startTime != 0) {
             long bufferTime = System.currentTimeMillis() - startTime;
             totalTime = totalTime + bufferTime;

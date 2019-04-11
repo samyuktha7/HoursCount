@@ -17,6 +17,20 @@ public class CommonUtils {
     private static CommonUtils mInstance = null;
 
 
+    public String SP_NAME_ADDRESS = "Address_Info";
+    public String SP_OFFICEADDRESS = "Address";
+
+    public String SP_FIRSTCHECKIN = "firstCheckIn";
+    public String SP_LASTCHECKOUT = "lastCheckOut";
+    public String SP_InOFFICE = "InOffice";
+    public String SP_STARTTIME = "StartTime";
+    public String SP_TOTALTIME = "TotalTime";
+    public String SP_RESET = "reset";
+    public String SP_NAME_TIME = "time";
+    public String SP_TOTALWEEKTIME = "TotalWeekTime";
+
+
+
     public static CommonUtils getInstance(Context ctx) {
         Log.d("CommonUtils", "getInstance()");
         /**
@@ -59,21 +73,21 @@ public class CommonUtils {
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         //clears the startTime and totalTime to calculate for next day.
-        editor.putLong("StartTime", 0);
-        editor.putLong("TotalTime", 0);
+        editor.putLong(SP_STARTTIME, 0);
+        editor.putLong(SP_TOTALTIME, 0);
 
         //clearsFirstCheckIn and LastCheckout
-        editor.putString("LastCheckedIn", null);
-        editor.putString("LastCheckedOut", null);
+        editor.putString(SP_FIRSTCHECKIN, null);
+        editor.putString(SP_LASTCHECKOUT, null);
 
         //clears InOffice boolean
-        editor.putBoolean("InOffice", false);
+        editor.putBoolean(SP_InOFFICE, false);
 
         //updates the UI to reset everything
-        editor.putBoolean("reset", true);
+        editor.putBoolean(SP_RESET, true);
 
         if (addressChange) {
-            editor.putFloat("TotalWeekTime", 0);
+            editor.putFloat(SP_TOTALWEEKTIME, 0);
 
             //clears all days values in a week
             for (int i = 1; i <= 7; i++) {
