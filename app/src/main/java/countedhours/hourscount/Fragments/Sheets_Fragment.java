@@ -87,8 +87,14 @@ public class Sheets_Fragment extends Fragment {
             Log.d(TAG, "onBindViewHolder");
             if (data != null) {
                 SheetsData sheetData = data.get(i);
+                float weekly = 40;
                 myviewHolder.weekNumber.setText(sheetData.getWeekEnd());
+                float totalTime = sheetData.getHours();
                 myviewHolder.noOfHours.setText(String.valueOf(sheetData.getHours()));
+                if (totalTime > weekly) {
+                    myviewHolder.noOfHours.setTextColor(getResources().getColor(R.color.secondary));
+                    myviewHolder.weekNumber.setTextColor(getResources().getColor(R.color.secondary));
+                }
             } else {
                 Log.d(TAG, "onBindViewHolder() : sheets data is null");
             }
