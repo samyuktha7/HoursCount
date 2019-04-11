@@ -17,11 +17,16 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 
+/*
+This activity is the main activity with a frame layout, which accomodates three fragments to view
+Today, Weekly, Sheets.
+ */
 public class MainActivity extends AppCompatActivity {
 
-    private BottomNavigationView mBottomNavigation;
-    private Fragment mFragment;
     private String TAG = "HC_"+MainActivity.class.getSimpleName();
+
+    private Fragment mFragment;
+
 
     @Override
     protected void onStart() {
@@ -34,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mBottomNavigation = (BottomNavigationView)findViewById(R.id.navigationBar);
+        BottomNavigationView mBottomNavigation = (BottomNavigationView)findViewById(R.id.navigationBar);
 
         final Today_Fragment todayFragment = new Today_Fragment();
         final Week_Fragment weekFragment = new Week_Fragment();

@@ -162,9 +162,9 @@ public class Week_Fragment extends Fragment {
         //updateUI - Weeks
         mTotal.setText(df.format(mTotalWeeksTime));
 
-        //updateCircularUI
-        long fortyHoursPerWeek = 40 * 60 * 60000;
-        float percentage = ((((float) mTotalWeeksTime) * 100) / fortyHoursPerWeek );
+        //updateCircularUI - total weeks time in 40 hours
+        float percentage = (((float) mTotalWeeksTime * 100) / 40 );
+        Log.d(TAG, "percentage is  "+percentage);
         mWeekProgress.setProgress(percentage);
     }
 

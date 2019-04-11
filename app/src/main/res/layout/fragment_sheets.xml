@@ -10,10 +10,17 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="SHEETS"
+        android:text="TIME SHEETS"
+        android:layout_marginTop="10dp"
         android:textColor="#ffffff"
-        android:gravity="center_horizontal"
-        android:textSize="40dp"/>
+        android:gravity="left"
+        android:textSize="30dp"/>
+
+    <View
+        android:layout_width="180dp"
+        android:layout_marginTop="5dp"
+        android:layout_height="2dp"
+        android:background="#e67300" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/my_recycler_view"

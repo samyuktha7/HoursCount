@@ -17,6 +17,7 @@ import com.budiyev.android.circularprogressbar.CircularProgressBar;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -28,18 +29,18 @@ import countedhours.hourscount.service.GeoIntentService;
 
 public class Today_Fragment extends Fragment {
 
-    private TextView mTimeRemaining, mHoursCompleted, mInOffice, mLastCheckedIn, mLastCheckedOut;
+    private TextView mTimeRemaining, mHoursCompleted, mInOffice, mLastCheckedIn, mLastCheckedOut, mToday;
     private Button mPauseButton, mStartButton;
     private CircularProgressBar mProgressBar;
 
     private String TAG = "HC_"+Today_Fragment.class.getSimpleName();
     private DateFormat formatter;
     private SharedPreferences mSharedPreferences;
-    private boolean alreadyStarted = false;
     private Handler updateTimeHandler = new Handler();
+
     private boolean inOffice;
-    private boolean resetEverything = false;
-    private String checkIn, checkOut;
+    private boolean alreadyStarted = false;
+    private String checkOut;
     private boolean firstUpdate = false;
 
     @Override
@@ -59,6 +60,7 @@ public class Today_Fragment extends Fragment {
         mPauseButton = v.findViewById(R.id.pauseButton);
         mStartButton = v.findViewById(R.id.startButton);
         mProgressBar = v.findViewById(R.id.progressBar);
+        mToday = v.findViewById(R.id.todaysDate);
 
         return v;
     }
@@ -75,6 +77,12 @@ public class Today_Fragment extends Fragment {
 
         //If the context is not null, get Shared Preferences.
         if (this.getActivity() != null) {
+
+            //Display Today's Date
+            Date c = Calendar.getInstance().getTime();
+            SimpleDateFormat df = new SimpleDateFormat("MMMM dd yyyy , EEEE");
+            mToday.setText(df.format(c));
+
             mSharedPreferences = this.getActivity().getSharedPreferences("TIME", Context.MODE_PRIVATE);
             if (mSharedPreferences != null) {
 
@@ -129,7 +137,7 @@ public class Today_Fragment extends Fragment {
                 Log.w(TAG, "out of office");
 
                 // reset during updateThreadHandler will update the UI with reset values.
-                resetEverything = mSharedPreferences.getBoolean("reset", false);
+                boolean resetEverything = mSharedPreferences.getBoolean("reset", false);
                 if (resetEverything) {
                     long totalTime = mSharedPreferences.getLong("TotalTime", 0);
                     if (totalTime == 0) {
@@ -220,7 +228,7 @@ public class Today_Fragment extends Fragment {
              Log.d(TAG, "percentage on circular progress bar "+percentage);
              mProgressBar.setProgress(percentage);
 
-             checkIn = mSharedPreferences.getString("LastCheckedIn", null);
+             String checkIn = mSharedPreferences.getString("LastCheckedIn", null);
              if (checkIn != null) {
                  mLastCheckedIn.setText(checkIn);
              }

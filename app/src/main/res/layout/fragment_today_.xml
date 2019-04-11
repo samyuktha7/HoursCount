@@ -8,22 +8,37 @@
     android:orientation="vertical"
     tools:context=".Fragments.Today_Fragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="WORKED TODAY"
         android:textColor="#ffffff"
-        android:gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:gravity="left"
         android:id="@+id/workingHours"
-        android:textSize="30dp"
-        android:layout_gravity="center"/>
+        android:textStyle="bold"
+        android:textSize="30dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#ffffff"
+        android:gravity="left"
+        android:id="@+id/todaysDate"
+        android:textStyle="bold"
+        android:textSize="15dp" />
+
+    <View
+        android:layout_width="180dp"
+        android:layout_marginTop="5dp"
+        android:layout_height="2dp"
+        android:background="#e67300" />
 
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:layout_marginTop="10dp"
+    android:layout_marginTop="30dp"
     android:gravity="center_horizontal">
 
     <LinearLayout
@@ -36,8 +51,7 @@
             android:layout_height="wrap_content"
             android:text="First CheckIn"
             android:textColor="#ffffff"
-            android:textSize="20dp"
-            android:paddingTop="50dp"/>
+            android:textSize="20dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -62,8 +76,7 @@
             android:layout_height="wrap_content"
             android:text="Last CheckOut"
             android:textColor="#ffffff"
-            android:textSize="20dp"
-            android:paddingTop="50dp"/>
+            android:textSize="20dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -131,25 +144,25 @@
         android:gravity="center_horizontal"
         android:layout_marginTop="20dp"/>
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="15dp"
-    android:gravity="center_horizontal"
-    android:orientation="horizontal">
-    <Button
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Start"
-        android:id="@+id/startButton" />
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Pause"
-        android:layout_marginLeft="30dp"
-        android:id="@+id/pauseButton"
-        />
+        android:layout_marginTop="15dp"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Start"
+            android:id="@+id/startButton" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pause"
+            android:layout_marginLeft="30dp"
+            android:id="@+id/pauseButton"
+            />
 
-</LinearLayout>
+    </LinearLayout>
 
 </LinearLayout>

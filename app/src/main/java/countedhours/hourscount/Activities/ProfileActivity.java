@@ -40,10 +40,12 @@ import countedhours.hourscount.service.GeoIntentService;
 
 public class ProfileActivity extends AppCompatActivity {
 
+    private String TAG = "HC_"+ProfileActivity.class.getSimpleName();
+
     private EditText mAddressInformation;
     private String mAddress;
     private Button mSaveAddressButton;
-    private String TAG = "HC_"+ProfileActivity.class.getSimpleName();
+
     private Address mLocation;
     private SharedPreferences sharedPreferences;
     private Geofence mGeofence;
@@ -51,7 +53,6 @@ public class ProfileActivity extends AppCompatActivity {
     private SharedPreferences.Editor mEditor;
     private String temp;
     private CommonUtils mUtils;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
