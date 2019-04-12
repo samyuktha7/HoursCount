@@ -65,7 +65,6 @@ public class Sheets_Fragment extends Fragment {
         return v;
     }
 
-
     /*
     Setting up the Recycler view.
         *Each layout has a seperate layout xml file. which is initialized.
