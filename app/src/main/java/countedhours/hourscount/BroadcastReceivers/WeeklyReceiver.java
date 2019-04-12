@@ -32,7 +32,7 @@ public class WeeklyReceiver extends BroadcastReceiver {
 
         mUtils = CommonUtils.getInstance(context);
         SqLiteDatabaseHelper dbHelper = SqLiteDatabaseHelper.getInstance(context);
-        mSharedPreferences = context.getSharedPreferences("TIME", Context.MODE_PRIVATE);
+        mSharedPreferences = context.getSharedPreferences(mUtils.SP_NAME_TIME, Context.MODE_PRIVATE);
 
         //get the totalWeekTime (float) from shared preferences.
         float totalWeekTime = mSharedPreferences.getFloat(mUtils.SP_TOTALWEEKTIME, 0);

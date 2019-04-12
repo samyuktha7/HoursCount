@@ -15,6 +15,9 @@ import android.widget.TextView;
 import com.budiyev.android.circularprogressbar.CircularProgressBar;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 import countedhours.hourscount.CommonUtils;
 import countedhours.hourscount.R;
@@ -32,7 +35,7 @@ public class Week_Fragment extends Fragment {
 
     private String TAG = "HC_"+Week_Fragment.class.getSimpleName();
 
-    private TextView mMon, mTue, mWed, mThur, mFri, mSat, mSun, mTotal;
+    private TextView mMon, mTue, mWed, mThur, mFri, mSat, mSun, mTotal, mWeekStartDate, mWeekEndDate;
     private CircularProgressBar mWeekProgress;
 
     private int mDayOfTheWeek;
@@ -59,6 +62,9 @@ public class Week_Fragment extends Fragment {
         mSun = v.findViewById(R.id.sundayHours);
         mTotal = v.findViewById(R.id.totalHours);
 
+        mWeekStartDate = v.findViewById(R.id.weekStartDate);
+        mWeekEndDate = v.findViewById(R.id.weekEndDate);
+
         mWeekProgress = (CircularProgressBar) v.findViewById(R.id.weekProgress);
 
         mUtils = new CommonUtils(this.getActivity());
@@ -74,6 +80,20 @@ public class Week_Fragment extends Fragment {
         df.setMaximumFractionDigits(1);
 
         if (this.getActivity() != null) {
+
+            //week start date of week
+            Calendar c1 = Calendar.getInstance();
+            c1.set(Calendar.DAY_OF_WEEK, 1);
+            Date weekStart = c1.getTime();
+            SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+            mWeekStartDate.setText(df.format(weekStart));
+
+            //week end date of week
+            Calendar c2 = Calendar.getInstance();
+            c2.set(Calendar.DAY_OF_WEEK, 7);
+            Date weekEnd = c2.getTime();
+            mWeekEndDate.setText(" - "+df.format(weekEnd));
+
             mSharedPreferences = this.getActivity().getSharedPreferences(mUtils.SP_NAME_TIME, Context.MODE_PRIVATE);
 
             //gets the day of the week

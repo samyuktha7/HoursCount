@@ -20,8 +20,10 @@ import com.google.android.gms.location.GeofencingEvent;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
+import countedhours.hourscount.BroadcastReceivers.AlarmReceiver;
 import countedhours.hourscount.BroadcastReceivers.pushNotificationAlarm;
 import countedhours.hourscount.CommonUtils;
 
@@ -35,6 +37,8 @@ public class GeoIntentService extends IntentService {
 
     private String TAG = "HC_"+GeoIntentService.class.getSimpleName();
     private CommonUtils mUtils;
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
 
     public GeoIntentService() {
         super(GeoIntentService.class.getSimpleName());
@@ -74,27 +78,10 @@ public class GeoIntentService extends IntentService {
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         Log.d(TAG, "onHandleIntent() ");
-        mUtils = CommonUtils.getInstance(getApplicationContext());
-        SharedPreferences sharedPreferences = getSharedPreferences("TIME", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
 
         /*
-        Create a Notification channel, before posting notifications on version shigher than v.26
-        we create a notification channel as soon as the app is created ( for safe use)
-        with a channel ID and importance.
-        It is targeted to higher versions  only.
+        Check if the geofencing event has any error
          */
-        CharSequence name = "Hourscount";
-        int importance = NotificationManager.IMPORTANCE_DEFAULT;
-        NotificationChannel channel = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            channel = new NotificationChannel("sam", name, importance);
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
-
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
         if (geofencingEvent.hasError()) {
             String errorMessage = getErrorString(geofencingEvent.getErrorCode());
@@ -106,69 +93,121 @@ public class GeoIntentService extends IntentService {
         int geofenceTransition = geofencingEvent.getGeofenceTransition();
         int temp = intent.getIntExtra("pause", 0);
 
+        mUtils = CommonUtils.getInstance(getApplicationContext());
+        sharedPreferences = getSharedPreferences(mUtils.SP_NAME_TIME, Context.MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+
         // Test that the reported transition was of interest.
         if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER || temp == 5) {
             //Handle toasts
             Log.d(TAG, "GEOFENCE_TRANSITION_ENTER");
             toast("Geofence Entered", Toast.LENGTH_SHORT);
-
-            //Stores the LastCheckInValue - only done once a day
-            String lastChecked = sharedPreferences.getString(mUtils.SP_FIRSTCHECKIN, null);
-            if (lastChecked == null) {
-                DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
-                Date date = new Date();
-                String checkInTime = dateFormat.format(date);
-                Log.d(TAG, "todays time  "+checkInTime);
-
-                editor.putString(mUtils.SP_FIRSTCHECKIN, checkInTime);
-            }
-
-            //Enter values into SharedPreferences
-            //start time = currentmilliseconds
-            editor.putLong(mUtils.SP_STARTTIME, System.currentTimeMillis());
-            long totalTime = sharedPreferences.getLong(mUtils.SP_TOTALTIME, 0);
-            editor.putLong(mUtils.SP_TOTALTIME, totalTime);
-            editor.putBoolean(mUtils.SP_InOFFICE, true);
-
-            //starts an Alarm to trigger after (8 - total hours) - which will push a notification
-            Intent i = new Intent(this, pushNotificationAlarm.class);
-            PendingIntent sender = PendingIntent.getBroadcast(this, 0,
-                    i, 0);
-
-            // calculates 8-total time to trigger the alarm
-            long currentTime = System.currentTimeMillis();
-            long alarmTriggerTime = currentTime + ((8 * 60 * 60000) - totalTime);
-            Log.d(TAG, "alarm triggered after "+ (((8 * 60 * 60000) - totalTime))/60000 + " minutes");
-
-            // Schedule the alarm. Triggers the alarm at currentTime + after 8 hours time.
-            AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
-            am.setExact(AlarmManager.RTC_WAKEUP, alarmTriggerTime, sender);
+            createNotificationChannel();
+            handleGeofenceEnter();
 
         } else if(geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT || temp == 7) {
             //Handle Toasts
             Log.d(TAG, "GEOFENCE_TRANSITION_EXIT");
             toast("Geofence Exited", Toast.LENGTH_SHORT);
-
-            //Enter values into shared preferences
-            //totalTime = totalTime + CurrentTime - startTime;
-            //start time = 0
-            long startTime = sharedPreferences.getLong(mUtils.SP_STARTTIME, 0);
-            long totalTime = sharedPreferences.getLong(mUtils.SP_TOTALTIME, 0);
-            editor.putLong(mUtils.SP_TOTALTIME, (totalTime + (System.currentTimeMillis() - startTime)));
-            editor.putLong(mUtils.SP_STARTTIME, 0);
-            editor.putBoolean(mUtils.SP_InOFFICE, false);
-
-            //stores lastCheckOut - done everytime GeoFence EXIT triggers.
-            DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
-            Date date = new Date();
-            String checkOutTime = dateFormat.format(date);
-            Log.d(TAG, "checkOutTime "+checkOutTime);
-
-            editor.putString(mUtils.SP_LASTCHECKOUT, checkOutTime);
+            handleGeofenceExit();
         }
         editor.apply();
+    }
 
+    /*
+        Create a Notification channel, before posting notifications on version shigher than v.26
+        we create a notification channel as soon as the app is created ( for safe use)
+        with a channel ID and importance.
+        It is targeted to higher versions  only.
+         */
+    private void createNotificationChannel()
+    {
+        CharSequence name = "Hourscount";
+        int importance = NotificationManager.IMPORTANCE_DEFAULT;
+        NotificationChannel channel = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            channel = new NotificationChannel("sam", name, importance);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
 
+    /*
+    Handles all geofence ENTER values.
+     */
+    private void handleGeofenceEnter() {
+        //Stores the LastCheckInValue - only done once a day
+        String lastChecked = sharedPreferences.getString(mUtils.SP_FIRSTCHECKIN, null);
+        if (lastChecked == null) {
+            DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+            Date date = new Date();
+            String checkInTime = dateFormat.format(date);
+            Log.d(TAG, "todays time  "+checkInTime);
+
+            editor.putString(mUtils.SP_FIRSTCHECKIN, checkInTime);
+        }
+
+        /*
+        AlarmReceiver is called again, to make sure everything is cleared. Next day starts fresh
+         */
+        String date = sharedPreferences.getString(mUtils.SP_TODAYSDATE, null);
+        Date c = Calendar.getInstance().getTime();
+        SimpleDateFormat df = new SimpleDateFormat("MMMM dd yyyy");
+        String today = df.format(c);
+        Log.d(TAG, "date "+date+ "  today "+today);
+        if (date == null || !date.equals(today)) {
+            Log.d(TAG, "Day is different, lets Clear up database");
+            editor.putString(mUtils.SP_TODAYSDATE, today);
+            AlarmReceiver alarm = new AlarmReceiver();
+            alarm.onReceive(getApplicationContext(), null);
+        }
+
+        //Enter values into SharedPreferences
+        //start time = currentmilliseconds
+        editor.putLong(mUtils.SP_STARTTIME, System.currentTimeMillis());
+        long totalTime = sharedPreferences.getLong(mUtils.SP_TOTALTIME, 0);
+        editor.putLong(mUtils.SP_TOTALTIME, totalTime);
+        editor.putBoolean(mUtils.SP_InOFFICE, true);
+
+        //trigger Alarm after 8 hours
+        triggerAlarm(totalTime);
+    }
+
+    private void triggerAlarm(long totalTime) {
+        //starts an Alarm to trigger after (8 - total hours) - which will push a notification
+        Intent i = new Intent(this, pushNotificationAlarm.class);
+        PendingIntent sender = PendingIntent.getBroadcast(this, 0,
+                i, 0);
+
+        // calculates 8-total time to trigger the alarm
+        long currentTime = System.currentTimeMillis();
+        long alarmTriggerTime = currentTime + ((8 * 60 * 60000) - totalTime);
+        Log.d(TAG, "alarm triggered after "+ (((8 * 60 * 60000) - totalTime))/60000 + " minutes");
+
+        // Schedule the alarm. Triggers the alarm at currentTime + after 8 hours time.
+        AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+        am.setExact(AlarmManager.RTC_WAKEUP, alarmTriggerTime, sender);
+    }
+
+    private void handleGeofenceExit() {
+        //Enter values into shared preferences
+        //totalTime = totalTime + CurrentTime - startTime;
+        //start time = 0
+        long startTime = sharedPreferences.getLong(mUtils.SP_STARTTIME, 0);
+        long totalTime = sharedPreferences.getLong(mUtils.SP_TOTALTIME, 0);
+        editor.putLong(mUtils.SP_TOTALTIME, (totalTime + (System.currentTimeMillis() - startTime)));
+        editor.putLong(mUtils.SP_STARTTIME, 0);
+        editor.putBoolean(mUtils.SP_InOFFICE, false);
+
+        //stores lastCheckOut - done everytime GeoFence EXIT triggers.
+        DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+        Date date = new Date();
+        String checkOutTime = dateFormat.format(date);
+        Log.d(TAG, "checkOutTime "+checkOutTime);
+
+        editor.putString(mUtils.SP_LASTCHECKOUT, checkOutTime);
     }
 
     private void toast(final String text, final int duration) {

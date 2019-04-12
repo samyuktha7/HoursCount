@@ -179,8 +179,8 @@ public class Today_Fragment extends Fragment {
         Log.d(TAG, "updateTimeElapsed()");
 
         long startTime = mSharedPreferences.getLong(mUtils.SP_STARTTIME, 0);
-        long totalTime = mSharedPreferences.getLong(mUtils.SP_TOTALTIME, 0);
         if (startTime != 0) {
+            long totalTime = mSharedPreferences.getLong(mUtils.SP_TOTALTIME, 0);
             long bufferTime = System.currentTimeMillis() - startTime;
             totalTime = totalTime + bufferTime;
             Log.d(TAG, "time() " + totalTime);

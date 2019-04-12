@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -224,16 +225,15 @@ public class ProfileActivity extends AppCompatActivity {
 
         //Perform Daily Operations
         Intent intent = new Intent(ProfileActivity.this, AlarmReceiver.class);
-        PendingIntent alarmIntent = PendingIntent.getBroadcast(ProfileActivity.this, 0, intent, 0);
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(ProfileActivity.this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         // Set the alarm to start at approximately 00:00 h(24h format).
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 23); // For 11:55 PM
-        calendar.set(Calendar.MINUTE, 55);
+        calendar.set(Calendar.HOUR_OF_DAY, 13); // For 11:55 PM
+        calendar.set(Calendar.MINUTE, 52);
         calendar.set(Calendar.SECOND, 0);
         //repeteat alarm every 24hours
-        alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+        alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
                 AlarmManager.INTERVAL_DAY, alarmIntent);
-
 
         //perform Weekly operations
         Intent intentWeek = new Intent(ProfileActivity.this, WeeklyReceiver.class);
@@ -279,7 +279,7 @@ public class ProfileActivity extends AppCompatActivity {
         return sharedPreferences.getString(mUtils.SP_OFFICEADDRESS, null);
     }
 
-    public void setAddressField(String address, boolean enabled, boolean save) {
+    public synchronized  void setAddressField(String address, boolean enabled, boolean save) {
         Log.d(TAG, "setAddressField = " + address + "; enabled = " + enabled + "; save =" + save);
         if (address != null) {
             mAddressInformation.setText(address);

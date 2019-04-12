@@ -23,7 +23,15 @@ public class AlarmReceiver extends BroadcastReceiver {
         Log.d(TAG, "onReceive()");
         mUtils = CommonUtils.getInstance(context);
         SharedPreferences mSharedPreferences = context.getSharedPreferences(mUtils.SP_NAME_TIME, Context.MODE_PRIVATE);
-        long totalTime = mSharedPreferences.getLong(mUtils.SP_TOTALTIME,-1);
+
+        long startTime = mSharedPreferences.getLong(mUtils.SP_STARTTIME, 0);
+        long totalTime = mSharedPreferences.getLong(mUtils.SP_TOTALTIME, -1);
+        if (startTime != 0) {
+            long bufferTime = System.currentTimeMillis() - startTime;
+            totalTime = totalTime + bufferTime;
+            Log.d(TAG, "time() " + totalTime);
+        }
+
         if (totalTime != -1) {
             //Stores the total time in day_of_week field.
             int day_of_week = mUtils.getDayOfTheWeek();
@@ -37,6 +45,7 @@ public class AlarmReceiver extends BroadcastReceiver {
             totalWeekTime = totalWeekTime + totalTimeInHours;
             editor.putFloat(mUtils.SP_TOTALWEEKTIME, totalWeekTime);
             Log.d(TAG, "totalWeekTime = "+totalWeekTime);
+            editor.apply();
 
             mUtils.resetEverything(context, false);
         } else {

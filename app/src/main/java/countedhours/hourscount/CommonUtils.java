@@ -28,6 +28,7 @@ public class CommonUtils {
     public String SP_RESET = "reset";
     public String SP_NAME_TIME = "time";
     public String SP_TOTALWEEKTIME = "TotalWeekTime";
+    public String SP_TODAYSDATE = "TodaysDate";
 
 
 
@@ -69,7 +70,7 @@ public class CommonUtils {
     address is changed.
      */
     public void resetEverything(Context context, boolean addressChange) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences("TIME", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SP_NAME_TIME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         //clears the startTime and totalTime to calculate for next day.
