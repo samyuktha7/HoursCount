@@ -16,12 +16,11 @@ This Broadcast Receiver AlarmReceiver will receive events every day to perform f
 public class AlarmReceiver extends BroadcastReceiver {
 
     private String TAG = "HC_"+AlarmReceiver.class.getSimpleName();
-    private CommonUtils mUtils;
 
     @Override
     public void onReceive(final Context context, Intent intent) {
         Log.d(TAG, "onReceive()");
-        mUtils = CommonUtils.getInstance(context);
+        CommonUtils mUtils = CommonUtils.getInstance(context);
         SharedPreferences mSharedPreferences = context.getSharedPreferences(mUtils.SP_NAME_TIME, Context.MODE_PRIVATE);
 
         long startTime = mSharedPreferences.getLong(mUtils.SP_STARTTIME, 0);

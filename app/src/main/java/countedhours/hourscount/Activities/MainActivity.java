@@ -15,7 +15,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.FrameLayout;
 
 /*
 This activity is the main activity with a frame layout, which accomodates three fragments to view
@@ -26,7 +25,6 @@ public class MainActivity extends AppCompatActivity {
     private String TAG = "HC_"+MainActivity.class.getSimpleName();
 
     private Fragment mFragment;
-
 
     @Override
     protected void onStart() {
