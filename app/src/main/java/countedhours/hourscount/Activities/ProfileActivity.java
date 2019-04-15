@@ -111,7 +111,6 @@ public class ProfileActivity extends AppCompatActivity {
         AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
         builder1.setMessage("Resetting address will reset all your values");
         builder1.setCancelable(true);
-
         builder1.setPositiveButton(
                 "Yes",
                 new DialogInterface.OnClickListener() {
@@ -129,8 +128,8 @@ public class ProfileActivity extends AppCompatActivity {
                     }
                 });
 
-        AlertDialog alert11 = builder1.create();
-        alert11.show();
+        AlertDialog alertDialog = builder1.create();
+        alertDialog.show();
     }
 
     private void storeNewAddress() {
@@ -228,7 +227,7 @@ public class ProfileActivity extends AppCompatActivity {
         PendingIntent alarmIntent = PendingIntent.getBroadcast(ProfileActivity.this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         // Set the alarm to start at approximately 00:00 h(24h format).
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 13); // For 11:55 PM
+        calendar.set(Calendar.HOUR_OF_DAY, 23); // For 11:55 PM
         calendar.set(Calendar.MINUTE, 52);
         calendar.set(Calendar.SECOND, 0);
         //repeteat alarm every 24hours

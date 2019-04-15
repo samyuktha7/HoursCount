@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.budiyev.android.circularprogressbar.CircularProgressBar;
 
@@ -24,6 +26,7 @@ import java.util.TimeZone;
 
 import countedhours.hourscount.Activities.ProfileActivity;
 import countedhours.hourscount.CommonUtils;
+import countedhours.hourscount.CustomBreakDialog;
 import countedhours.hourscount.R;
 import countedhours.hourscount.service.GeoIntentService;
 
@@ -33,6 +36,7 @@ public class Today_Fragment extends Fragment {
     private TextView mTimeRemaining, mHoursCompleted, mInOffice, mLastCheckedIn, mLastCheckedOut, mToday;
     private Button mPauseButton, mStartButton;
     private CircularProgressBar mProgressBar;
+    private FloatingActionButton mFab;
 
     private String TAG = "HC_"+Today_Fragment.class.getSimpleName();
     private DateFormat formatter;
@@ -63,6 +67,7 @@ public class Today_Fragment extends Fragment {
         mStartButton = v.findViewById(R.id.startButton);
         mProgressBar = v.findViewById(R.id.progressBar);
         mToday = v.findViewById(R.id.todaysDate);
+        mFab = v.findViewById(R.id.fab);
 
         return v;
     }
@@ -98,6 +103,26 @@ public class Today_Fragment extends Fragment {
             } else {
                 Log.d(TAG, "sharedpreferences Context null");
             }
+
+            mFab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    long startTime = mSharedPreferences.getLong(mUtils.SP_STARTTIME, 0);
+                    if (startTime != 0) {
+                        CustomBreakDialog cdd = new CustomBreakDialog(getActivity());
+                        cdd.show();
+                        return;
+                    } else {
+                        long totalTime = mSharedPreferences.getLong(mUtils.SP_TOTALTIME, 0);
+                        if (totalTime != 0) {
+                            CustomBreakDialog cdd = new CustomBreakDialog(getActivity());
+                            cdd.show();
+                            return;
+                        }
+                    }
+                    Toast.makeText(getContext(), "No Office Hours", Toast.LENGTH_SHORT ).show();
+                }
+            });
         } else {
             Log.w(TAG, "context is null");
         }
