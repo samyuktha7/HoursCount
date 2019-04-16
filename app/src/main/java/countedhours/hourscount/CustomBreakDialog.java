@@ -74,9 +74,23 @@ public class CustomBreakDialog extends Dialog {
                             long bufferTime = System.currentTimeMillis() - startTime;
                             if (totalTime != 0) {
                                 Log.d(TAG, "case 1: startTime and totalTime != 0");
-                                totalTime = totalTime + bufferTime;
+
                                 if (checkIfBreakTimeIsValid(totalTime, breakTime)) {
+                                    Log.d(TAG, "case 1.1 : total > break Time");
                                     calculateTimeAfterBreak(totalTime, breakTime);
+                                } else {
+                                    totalTime = totalTime + bufferTime;
+                                    Log.d(TAG, "case 1.1 : total+ buffer > break Time");
+                                    if (checkIfBreakTimeIsValid(totalTime, breakTime)) {
+                                        startTime = startTime + (totalTime - breakTime);
+                                        totalTime = 0;
+                                        mEditor.putLong(mUtils.SP_STARTTIME, startTime);
+                                        mEditor.putLong(mUtils.SP_TOTALTIME, totalTime);
+                                        mEditor.apply();
+                                        triggerAlarms(totalTime);
+                                    } else {
+                                        showToast();
+                                    }
                                 }
                             } else {
                                 Log.d(TAG, "case 1: startTime != 0 and totalTime == 0. First checkIn and no checkout yet");
@@ -88,8 +102,9 @@ public class CustomBreakDialog extends Dialog {
                                     //StartTime changed. Trigger alarms
                                     bufferTime = System.currentTimeMillis() - startTime;
                                     totalTime = totalTime + bufferTime;
-                                    mUtils.triggerEightHourAlarm(mActivity, totalTime);
-                                    mUtils.triggerWeeklyAlarm(mActivity, totalTime);
+                                    triggerAlarms(totalTime);
+                                } else {
+                                    showToast();
                                 }
                             }
                         } else {
@@ -97,6 +112,11 @@ public class CustomBreakDialog extends Dialog {
                                 Log.d(TAG, "Case 3 : StartTime == 0 and totalTime != 0");
                                 if (checkIfBreakTimeIsValid(totalTime, breakTime)) {
                                     calculateTimeAfterBreak(totalTime, breakTime);
+
+                                    //to update UI when Out of office and custom berak is added
+                                    mUtils.firstUpdateTodays = true;
+                                } else {
+                                    showToast();
                                 }
                             } else {
                                 Log.d(TAG, "case 4 : startTime == 0 and totalTime == 0. Day has not started");
@@ -124,13 +144,7 @@ public class CustomBreakDialog extends Dialog {
     }
 
     private boolean checkIfBreakTimeIsValid(long total, long breakTime) {
-         if (total > breakTime) {
-             return true;
-         } else {
-             Log.d(TAG, "Break time > total Time. Invalid");
-             showToast();
-             return false;
-         }
+        return  total >= breakTime;
     }
 
     private void calculateTimeAfterBreak(long total, long breakTime) {
@@ -138,8 +152,11 @@ public class CustomBreakDialog extends Dialog {
         Log.d(TAG, "Total Time now = "+total);
         mEditor.putLong(mUtils.SP_TOTALTIME, total);
         mEditor.apply();
+        triggerAlarms(total);
 
-        //totalTime Changed. Trigger Alarms
+    }
+
+    private void triggerAlarms(long total) {
         mUtils.triggerEightHourAlarm(mActivity, total);
         mUtils.triggerWeeklyAlarm(mActivity, total);
     }

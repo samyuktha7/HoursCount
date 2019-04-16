@@ -38,7 +38,7 @@ public class CommonUtils {
     public String SP_TOTALWEEKTIME = "TotalWeekTime";
     public String SP_TODAYSDATE = "TodaysDate";
 
-
+    public boolean firstUpdateTodays = false;
 
     public static CommonUtils getInstance(Context ctx) {
         Log.d("CommonUtils", "getInstance()");

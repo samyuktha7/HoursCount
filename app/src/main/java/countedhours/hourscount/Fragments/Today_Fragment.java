@@ -46,7 +46,6 @@ public class Today_Fragment extends Fragment {
     private boolean inOffice;
     private boolean alreadyStarted = false;
     private String checkOut;
-    private boolean firstUpdate = false;
 
     private long eightHoursADay = 8 * 60 * 60000;
 
@@ -97,7 +96,7 @@ public class Today_Fragment extends Fragment {
 
                 //start the UI handler to update every second.
                 if (!alreadyStarted) {
-                    firstUpdate = true;
+                    mUtils.firstUpdateTodays = true;
                     updateTimeHandler.postDelayed(updateTimerThread, 0);
                 }
                 alreadyStarted = true;
@@ -161,7 +160,7 @@ public class Today_Fragment extends Fragment {
         public void run() {
             if (checkInOffice()) {
                 updateTimeElapsed();
-                firstUpdate = false;
+                mUtils.firstUpdateTodays = false;
             } else {
                 Log.w(TAG, "out of office");
 
@@ -178,7 +177,7 @@ public class Today_Fragment extends Fragment {
                     it does not persist the old paused timings, instead no values are set (looks like reset)
                     firstUpdate is a boolean which will update the old paused values.
                      */
-                    if (firstUpdate) {
+                    if (mUtils.firstUpdateTodays) {
                         long totalTime = mSharedPreferences.getLong(mUtils.SP_TOTALTIME, 0);
                         updateUI(totalTime, false);
                     }
