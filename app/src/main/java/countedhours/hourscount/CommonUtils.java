@@ -1,12 +1,19 @@
 package countedhours.hourscount;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import java.util.Calendar;
 import java.util.Date;
+
+import countedhours.hourscount.BroadcastReceivers.pushNotificationAlarm;
+import countedhours.hourscount.BroadcastReceivers.pushWeeklyNotificationAlarm;
+
+import static android.content.Context.ALARM_SERVICE;
 
 /*
 Common methods used by different classes are declared here, to avoid duplicate code
@@ -15,6 +22,7 @@ public class CommonUtils {
 
     private String TAG = "HC_"+CommonUtils.class.getSimpleName();
     private static CommonUtils mInstance = null;
+    private SharedPreferences sharedPreferences;
 
 
     public String SP_NAME_ADDRESS = "Address_Info";
@@ -70,7 +78,7 @@ public class CommonUtils {
     address is changed.
      */
     public void resetEverything(Context context, boolean addressChange) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(SP_NAME_TIME, Context.MODE_PRIVATE);
+
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         //clears the startTime and totalTime to calculate for next day.
@@ -97,4 +105,61 @@ public class CommonUtils {
         }
         editor.apply();
     }
+
+    /*
+    Triggers the alarm after 8 hours are finished. ( = now + (8 - total))
+    */
+    public void triggerEightHourAlarm(Context context, long totalTime) {
+        Log.d(TAG, "triggerAlarm()");
+
+        //starts an Alarm to trigger after (8 - total hours) - which will push a notification
+        Intent i = new Intent(context, pushNotificationAlarm.class);
+        PendingIntent sender = PendingIntent.getBroadcast(context, 0,
+                i, 0);
+
+        // calculates 8-total time to trigger the alarm
+        long currentTime = System.currentTimeMillis();
+        long alarmTriggerTime = currentTime + ((8 * 60 * 60000) - totalTime);
+        Log.d(TAG, "alarm triggered after "+ (((8 * 60 * 60000) - totalTime))/60000 + " minutes");
+
+        // Schedule the alarm. Triggers the alarm at currentTime + after 8 hours time.
+        AlarmManager am = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+        am.setExact(AlarmManager.RTC_WAKEUP, alarmTriggerTime, sender);
+    }
+
+    /*
+    Triggers the alarm if the total Weekly hours are somewhere between 30 -40, which triggers an alarm
+    when it reaches 40 hours.
+    */
+    public void triggerWeeklyAlarm(Context ctx, long totalTime) {
+        Log.d(TAG, "triggerWeeklyAlarm()");
+
+        sharedPreferences = ctx.getSharedPreferences(SP_NAME_TIME, Context.MODE_PRIVATE);
+        float totalWeeksTime = sharedPreferences.getFloat(SP_TOTALWEEKTIME, 0);
+        long totalWeeksInMillis = ((long) totalWeeksTime * 60 * 60000);
+        long total = totalTime + totalWeeksInMillis;
+        Log.d(TAG, "totalweeks ="+totalWeeksInMillis+" total = "+total);
+
+        long week = 40 * 60 * 60000;
+        long totalInHours = total * 60 * 60000;
+
+        if (totalInHours >= 30 && totalInHours <=40) {
+            //starts an Alarm to trigger after (40 - total) - which will push a notification
+            Intent in = new Intent(ctx, pushWeeklyNotificationAlarm.class);
+            PendingIntent sender = PendingIntent.getBroadcast(ctx, 0,
+                    in, 0);
+
+            // calculates 40-total time to trigger the alarm
+            long currentTime = System.currentTimeMillis();
+
+            long alarmTriggerTime = currentTime + (week - total);
+            Log.d(TAG, "weekly() alarm triggered after "+ ((week - total) / 60000));
+
+            // Schedule the alarm. Triggers the alarm at currentTime + after 8 hours time.
+            AlarmManager am = (AlarmManager) ctx.getSystemService(ALARM_SERVICE);
+            am.setExact(AlarmManager.RTC_WAKEUP, alarmTriggerTime, sender);
+        }
+
+    }
+
 }

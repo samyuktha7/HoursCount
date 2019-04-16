@@ -173,59 +173,8 @@ public class GeoIntentService extends IntentService {
         editor.putBoolean(mUtils.SP_InOFFICE, true);
 
         //trigger Alarm after 8 hours
-        triggerAlarm(totalTime);
-        triggerWeeklyAlarm(totalTime);
-    }
-
-    private void triggerAlarm(long totalTime) {
-        Log.d(TAG, "triggerAlarm()");
-        //starts an Alarm to trigger after (8 - total hours) - which will push a notification
-        Intent i = new Intent(this, pushNotificationAlarm.class);
-        PendingIntent sender = PendingIntent.getBroadcast(this, 0,
-                i, 0);
-
-        // calculates 8-total time to trigger the alarm
-        long currentTime = System.currentTimeMillis();
-        long alarmTriggerTime = currentTime + ((8 * 60 * 60000) - totalTime);
-        Log.d(TAG, "alarm triggered after "+ (((8 * 60 * 60000) - totalTime))/60000 + " minutes");
-
-        // Schedule the alarm. Triggers the alarm at currentTime + after 8 hours time.
-        AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
-        am.setExact(AlarmManager.RTC_WAKEUP, alarmTriggerTime, sender);
-    }
-
-    /*
-    Triggers the alarm if the total Weekly hours are somewhere between 30 -40, which triggers an alarm
-    when it reaches 40 hours.
-     */
-    private void triggerWeeklyAlarm(long totalTime) {
-      Log.d(TAG, "triggerWeeklyAlarm()");
-
-      float totalWeeksTime = sharedPreferences.getFloat(mUtils.SP_TOTALWEEKTIME, 0);
-      long totalWeeksInMillis = ((long) totalWeeksTime * 60 * 60000);
-      long total = totalTime + totalWeeksInMillis;
-      Log.d(TAG, "totalweeks ="+totalWeeksInMillis+" total = "+total);
-
-      long week = 40 * 60 * 60000;
-      long totalInHours = total * 60 * 60000;
-
-      if (totalInHours >= 30 && totalInHours <=40) {
-          //starts an Alarm to trigger after (40 - total) - which will push a notification
-          Intent in = new Intent(this, pushWeeklyNotificationAlarm.class);
-          PendingIntent sender = PendingIntent.getBroadcast(this, 0,
-                  in, 0);
-
-          // calculates 40-total time to trigger the alarm
-          long currentTime = System.currentTimeMillis();
-
-          long alarmTriggerTime = currentTime + (week - total);
-          Log.d(TAG, "weekly() alarm triggered after "+ ((week - total) / 60000));
-
-          // Schedule the alarm. Triggers the alarm at currentTime + after 8 hours time.
-          AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
-          am.setExact(AlarmManager.RTC_WAKEUP, alarmTriggerTime, sender);
-      }
-
+        mUtils.triggerEightHourAlarm(this, totalTime);
+        mUtils.triggerWeeklyAlarm(this, totalTime);
     }
 
     private void handleGeofenceExit() {

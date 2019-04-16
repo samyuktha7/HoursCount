@@ -130,12 +130,15 @@ public class Week_Fragment extends Fragment {
         //updates Todays time in hours format.
         DecimalFormat df = new DecimalFormat();
         df.setMaximumFractionDigits(2);
-        mTodaysUpdatedTime = ((float) totalTime) / (60 * 60000);
-        mEditor.putFloat(String.valueOf(mDayOfTheWeek), mTodaysUpdatedTime);
+        if (totalTime != 0) {
+            mTodaysUpdatedTime = ((float) totalTime) / (60 * 60000);
+            mEditor.putFloat(String.valueOf(mDayOfTheWeek), mTodaysUpdatedTime);
+        }
 
         //Calculate and updates weeks Time
         mTotalWeeksTime = mSharedPreferences.getFloat(mUtils.SP_TOTALWEEKTIME, 0);
-        if (totalTime != 0) {
+        if (totalTime != 0 || mTotalWeeksTime != 0) {
+            Log.d(TAG, "adding "+mTotalWeeksTime);
             mTotalWeeksTime = mTotalWeeksTime + mTodaysUpdatedTime;
         }
         mEditor.apply();

@@ -24,7 +24,6 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import countedhours.hourscount.Activities.ProfileActivity;
 import countedhours.hourscount.CommonUtils;
 import countedhours.hourscount.CustomBreakDialog;
 import countedhours.hourscount.R;
@@ -48,6 +47,8 @@ public class Today_Fragment extends Fragment {
     private boolean alreadyStarted = false;
     private String checkOut;
     private boolean firstUpdate = false;
+
+    private long eightHoursADay = 8 * 60 * 60000;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -243,7 +244,6 @@ public class Today_Fragment extends Fragment {
              mHoursCompleted.setText(formatter.format(new Date(totalTime)) + "  Finished");
 
              //Calculating and setting the time Remaining
-             long eightHoursADay = 8 * 60 * 60000;
              if (eightHoursADay >= totalTime) {
                  long timeToWork = ((8 * 60 * 60000) - totalTime);
                  mTimeRemaining.setText(formatter.format(new Date(timeToWork)) + " Remaining ");

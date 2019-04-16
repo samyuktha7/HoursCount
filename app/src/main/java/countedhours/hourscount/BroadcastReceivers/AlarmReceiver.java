@@ -37,6 +37,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
             SharedPreferences.Editor editor = mSharedPreferences.edit();
             editor.putFloat(String.valueOf(day_of_week), ((float) totalTime / (60 * 60000)));
+            Log.d(TAG, "day of the week "+String.valueOf(day_of_week)+"  "+((float) totalTime / (60 * 60000)));
 
             //stores the totalTime for Week (In Hours)
             float totalWeekTime = mSharedPreferences.getFloat(mUtils.SP_TOTALWEEKTIME, 0);
