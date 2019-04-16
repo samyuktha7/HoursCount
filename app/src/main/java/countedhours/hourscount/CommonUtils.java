@@ -74,6 +74,14 @@ public class CommonUtils {
     }
 
     /*
+    This time calculates the elapsed buffer time and adds to the total time
+    */
+    public long calculateElapsedTime(long startTime, long totalTime) {
+        long buffer = System.currentTimeMillis() - startTime;
+        return totalTime + buffer;
+    }
+
+    /*
     This method resets all the values in SharedPreferences. Also clears weekly values, if the
     address is changed.
      */

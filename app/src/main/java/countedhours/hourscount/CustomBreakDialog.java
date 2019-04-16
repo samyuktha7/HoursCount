@@ -100,8 +100,7 @@ public class CustomBreakDialog extends Dialog {
                                     mEditor.apply();
 
                                     //StartTime changed. Trigger alarms
-                                    bufferTime = System.currentTimeMillis() - startTime;
-                                    totalTime = totalTime + bufferTime;
+                                    totalTime = mUtils.calculateElapsedTime(startTime, totalTime);
                                     triggerAlarms(totalTime);
                                 } else {
                                     showToast();

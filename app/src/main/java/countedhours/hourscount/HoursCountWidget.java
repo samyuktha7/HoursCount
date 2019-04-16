@@ -33,8 +33,7 @@ public class HoursCountWidget extends AppWidgetProvider {
         long startTime = sharedPreferences.getLong(mUtils.SP_STARTTIME, 0);
         long totalTime = sharedPreferences.getLong(mUtils.SP_TOTALTIME, 0);
         if (startTime != 0) {
-            long bufferTime = System.currentTimeMillis() - startTime;
-            totalTime = totalTime + bufferTime;
+            totalTime = mUtils.calculateElapsedTime(startTime, totalTime);
         }
 
         //Calculating and setting the time Remaining

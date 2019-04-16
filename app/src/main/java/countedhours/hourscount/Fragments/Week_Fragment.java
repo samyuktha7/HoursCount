@@ -122,8 +122,7 @@ public class Week_Fragment extends Fragment {
         long startTime = mSharedPreferences.getLong(mUtils.SP_STARTTIME, 0);
         long totalTime = mSharedPreferences.getLong(mUtils.SP_TOTALTIME, 0);
         if (startTime != 0) {
-            long bufferTime = System.currentTimeMillis() - startTime;
-            totalTime = totalTime + bufferTime;
+            totalTime = mUtils.calculateElapsedTime(startTime, totalTime);
             Log.d(TAG, "time() " + totalTime);
         }
 
