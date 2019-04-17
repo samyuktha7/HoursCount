@@ -86,7 +86,8 @@ public class CommonUtils {
     address is changed.
      */
     public void resetEverything(Context context, boolean addressChange) {
-
+        Log.d(TAG, "resetEverything(): addressChange? = "+addressChange);
+        sharedPreferences = context.getSharedPreferences(SP_NAME_TIME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         //clears the startTime and totalTime to calculate for next day.

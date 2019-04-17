@@ -34,6 +34,10 @@ public class AlarmReceiver extends BroadcastReceiver {
             //Stores the total time in day_of_week field.
             int day_of_week = mUtils.getDayOfTheWeek();
 
+            if (intent == null) {
+                Log.d(TAG, "last night alarm failed. Triggering from Geofence Enter.");
+                day_of_week--;
+            }
             SharedPreferences.Editor editor = mSharedPreferences.edit();
             editor.putFloat(String.valueOf(day_of_week), ((float) totalTime / (60 * 60000)));
             Log.d(TAG, "day of the week "+String.valueOf(day_of_week)+"  "+((float) totalTime / (60 * 60000)));

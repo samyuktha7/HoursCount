@@ -139,17 +139,6 @@ public class GeoIntentService extends IntentService {
     Handles all geofence ENTER values.
      */
     private void handleGeofenceEnter() {
-        //Stores the LastCheckInValue - only done once a day
-        String lastChecked = sharedPreferences.getString(mUtils.SP_FIRSTCHECKIN, null);
-        if (lastChecked == null) {
-            DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
-            Date date = new Date();
-            String checkInTime = dateFormat.format(date);
-            Log.d(TAG, "todays time  "+checkInTime);
-
-            editor.putString(mUtils.SP_FIRSTCHECKIN, checkInTime);
-        }
-
         /*
         AlarmReceiver is called again, to make sure everything is cleared. Next day starts fresh
          */
@@ -163,6 +152,17 @@ public class GeoIntentService extends IntentService {
             editor.putString(mUtils.SP_TODAYSDATE, today);
             AlarmReceiver alarm = new AlarmReceiver();
             alarm.onReceive(getApplicationContext(), null);
+        }
+
+        //Stores the FirstCheckInValue - only done once a day
+        String lastChecked = sharedPreferences.getString(mUtils.SP_FIRSTCHECKIN, null);
+        if (lastChecked == null) {
+            DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+            Date checkIndate = new Date();
+            String checkInTime = dateFormat.format(checkIndate);
+            Log.d(TAG, "todays time  "+checkInTime);
+
+            editor.putString(mUtils.SP_FIRSTCHECKIN, checkInTime);
         }
 
         //Enter values into SharedPreferences
