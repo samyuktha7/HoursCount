@@ -25,6 +25,7 @@ public class NotifyLocationDisable extends BroadcastReceiver {
     private SharedPreferences mSharedPreferences;
     private CommonUtils mUtils;
     private Context mContext;
+    private NotificationManager mNotificationManager;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -35,10 +36,11 @@ public class NotifyLocationDisable extends BroadcastReceiver {
         mUtils = CommonUtils.getInstance(context);
         mSharedPreferences = context.getSharedPreferences(mUtils.SP_NAME_TIME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = mSharedPreferences.edit();
-
+        mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         if (mUtils.ifLocationAvailable(context)) {
             Log.i(TAG, "gpsSwitchStateReceiver.onReceive() location is enabled ");
             editor.putBoolean(mUtils.SP_AUTOMATICMODE, true);
+            mNotificationManager.cancelAll();
         } else {
             Log.w(TAG, "gpsSwitchStateReceiver.onReceive() location disabled ");
             /*
@@ -67,7 +69,6 @@ public class NotifyLocationDisable extends BroadcastReceiver {
         mBuilder.setAutoCancel(true);
 
         //For Notification to appear, we call npotify with a unique ID.
-        NotificationManager mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(1, mBuilder.build());
     }
 }
