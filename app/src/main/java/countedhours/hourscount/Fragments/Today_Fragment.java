@@ -5,8 +5,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -168,19 +170,28 @@ public class Today_Fragment extends Fragment {
                 mStartButton.setVisibility(View.VISIBLE);
                 mPauseButton.setVisibility(View.VISIBLE);
                 if (showWarningOnce) {
-                    final AlertDialog.Builder builder1 = new AlertDialog.Builder(mContext);
-                    builder1.setMessage("This App will better perform in Automatic Mode. Turn ON Location Services");
-                    builder1.setCancelable(true);
-                    builder1.setPositiveButton(
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                    builder.setMessage("This App will better perform in Automatic Mode. Turn ON Location Services");
+                    builder.setCancelable(true);
+                    builder.setPositiveButton(
                             "OK",
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
-
+                                    Intent myAppSettings = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                            Uri.parse("package:" + mContext.getPackageName()));
+                                    myAppSettings.addCategory(Intent.CATEGORY_DEFAULT);
+                                    myAppSettings.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(myAppSettings);
                                 }
                             });
 
+                    builder.setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
 
-                    AlertDialog alertDialog = builder1.create();
+                        }
+                    });
+                    AlertDialog alertDialog = builder.create();
                     alertDialog.show();
                     showWarningOnce = false;
                 }
