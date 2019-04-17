@@ -1,6 +1,8 @@
 package countedhours.hourscount.Fragments;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -45,7 +47,9 @@ public class Today_Fragment extends Fragment {
 
     private boolean inOffice;
     private boolean alreadyStarted = false;
+    private boolean showWarningOnce = true;
     private String checkOut = null;
+    private Context mContext;
 
     private long eightHoursADay = 8 * 60 * 60000;
 
@@ -82,6 +86,7 @@ public class Today_Fragment extends Fragment {
         //If the context is not null, get Shared Preferences.
         if (this.getActivity() != null) {
             mUtils = CommonUtils.getInstance(this.getActivity());
+            mContext = this.getActivity();
             setTodaysDate();
 
             mSharedPreferences = this.getActivity().getSharedPreferences(mUtils.SP_NAME_TIME, Context.MODE_PRIVATE);
@@ -162,7 +167,26 @@ public class Today_Fragment extends Fragment {
                 mMode.setVisibility(View.VISIBLE);
                 mStartButton.setVisibility(View.VISIBLE);
                 mPauseButton.setVisibility(View.VISIBLE);
+                if (showWarningOnce) {
+                    final AlertDialog.Builder builder1 = new AlertDialog.Builder(mContext);
+                    builder1.setMessage("This App will better perform in Automatic Mode. Turn ON Location Services");
+                    builder1.setCancelable(true);
+                    builder1.setPositiveButton(
+                            "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+
+                                }
+                            });
+
+
+                    AlertDialog alertDialog = builder1.create();
+                    alertDialog.show();
+                    showWarningOnce = false;
+                }
+
             } else {
+                showWarningOnce = true;
                 mMode.setVisibility(View.INVISIBLE);
                 mStartButton.setVisibility(View.INVISIBLE);
                 mPauseButton.setVisibility(View.INVISIBLE);
