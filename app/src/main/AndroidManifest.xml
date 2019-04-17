@@ -60,7 +60,16 @@
         <receiver
             android:name=".BroadcastReceivers.pushWeeklyNotificationAlarm"
             android:enabled="true"
-            android:exported="true"></receiver>
+            android:exported="true" />
+        <receiver
+            android:name=".BroadcastReceivers.NotifyLocationDisable"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.location.PROVIDERS_CHANGED" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

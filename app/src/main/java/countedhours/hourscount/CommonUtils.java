@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.LocationManager;
 import android.util.Log;
 
 import java.util.Calendar;
@@ -37,8 +38,10 @@ public class CommonUtils {
     public String SP_NAME_TIME = "time";
     public String SP_TOTALWEEKTIME = "TotalWeekTime";
     public String SP_TODAYSDATE = "TodaysDate";
+    public String SP_AUTOMATICMODE = "AutomaticMode";
 
     public boolean firstUpdateTodays = false;
+    public boolean mIsInForeground = false;
 
     public static CommonUtils getInstance(Context ctx) {
         Log.d("CommonUtils", "getInstance()");
@@ -168,7 +171,19 @@ public class CommonUtils {
             AlarmManager am = (AlarmManager) ctx.getSystemService(ALARM_SERVICE);
             am.setExact(AlarmManager.RTC_WAKEUP, alarmTriggerTime, sender);
         }
+    }
 
+    public boolean ifLocationAvailable(Context context) {
+        LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        if (locationManager != null) {
+            boolean isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            boolean isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+            return (isGpsEnabled || isNetworkEnabled);
+        } else {
+            Log.w(TAG, "Location Manager null");
+            return false;
+        }
     }
 
 }

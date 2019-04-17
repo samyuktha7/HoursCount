@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.LocationManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -59,7 +60,8 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate()");
         setContentView(R.layout.activity_profile);
-
+        mUtils = CommonUtils.getInstance(ProfileActivity.this);
+        mUtils.mIsInForeground = true;
         mAddressInformation = (EditText) findViewById(R.id.addressField);
         mSaveAddressButton = (Button) findViewById(R.id.Enter);
     }
@@ -69,7 +71,6 @@ public class ProfileActivity extends AppCompatActivity {
         super.onResume();
         Log.d(TAG, "onResume");
 
-        mUtils = CommonUtils.getInstance(ProfileActivity.this);
         sharedPreferences = getSharedPreferences(mUtils.SP_NAME_ADDRESS, Context.MODE_PRIVATE);
 
         mAddress = getAddressFromSharedPreferences();
@@ -157,6 +158,10 @@ public class ProfileActivity extends AppCompatActivity {
         Log.d(TAG, "startGeoFence() ");
         // Create a Geofence
         String id = UUID.randomUUID().toString();
+
+        if (mUtils.ifLocationAvailable(this)) {
+            mEditor.putBoolean(mUtils.SP_AUTOMATICMODE, true);
+        }
 
         mGeofencingClient = LocationServices.getGeofencingClient(ProfileActivity.this);
 
@@ -303,6 +308,11 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+    }
 
+    @Override
+    protected void onDestroy() {
+        mUtils.mIsInForeground = false;
+        super.onDestroy();
     }
 }

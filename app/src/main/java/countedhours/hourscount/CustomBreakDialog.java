@@ -64,7 +64,7 @@ public class CustomBreakDialog extends Dialog {
                             *  startTime != 0 && totalTime != 0 (calculate total, check and total-break)
                             * startTime != 0 && totalTime == 0 (calculate total, check and start+break)
                             * startTime == 0 && totalTime !=0  ( check and total-break)
-                            * stratTime == 0 && totalTime == 0 ( invalid case)
+                            * stratTime == 0 && totalTime == 0 ( invalid case) - Dilaog will not be shown in this case
                             *
                             * Also, trigger alarm if the breakTime changes our total time
                          */
@@ -117,9 +117,6 @@ public class CustomBreakDialog extends Dialog {
                                 } else {
                                     showToast();
                                 }
-                            } else {
-                                Log.d(TAG, "case 4 : startTime == 0 and totalTime == 0. Day has not started");
-                                showToast();
                             }
                         }
                     } catch (NumberFormatException e) {

@@ -32,7 +32,7 @@ import countedhours.hourscount.service.GeoIntentService;
 
 public class Today_Fragment extends Fragment {
 
-    private TextView mTimeRemaining, mHoursCompleted, mInOffice, mLastCheckedIn, mLastCheckedOut, mToday;
+    private TextView mTimeRemaining, mHoursCompleted, mInOffice, mLastCheckedIn, mLastCheckedOut, mToday, mMode;
     private Button mPauseButton, mStartButton;
     private CircularProgressBar mProgressBar;
     private FloatingActionButton mFab;
@@ -45,7 +45,7 @@ public class Today_Fragment extends Fragment {
 
     private boolean inOffice;
     private boolean alreadyStarted = false;
-    private String checkOut;
+    private String checkOut = null;
 
     private long eightHoursADay = 8 * 60 * 60000;
 
@@ -68,7 +68,8 @@ public class Today_Fragment extends Fragment {
         mProgressBar = v.findViewById(R.id.progressBar);
         mToday = v.findViewById(R.id.todaysDate);
         mFab = v.findViewById(R.id.fab);
-
+        mMode = v.findViewById(R.id.mode);
+        mMode.setVisibility(View.GONE);
         return v;
     }
 
@@ -78,32 +79,31 @@ public class Today_Fragment extends Fragment {
         super.onResume();
         Log.d(TAG, "onResume()");
 
-        //Used for Time displaying Time worked and Time remaining
-        formatter = new SimpleDateFormat("HH:mm:ss", Locale.US);
-        formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
-
         //If the context is not null, get Shared Preferences.
         if (this.getActivity() != null) {
             mUtils = CommonUtils.getInstance(this.getActivity());
-
-            //Display Today's Date
-            Date c = Calendar.getInstance().getTime();
-            SimpleDateFormat df = new SimpleDateFormat("MMMM dd yyyy , EEEE");
-            mToday.setText(df.format(c));
+            setTodaysDate();
 
             mSharedPreferences = this.getActivity().getSharedPreferences(mUtils.SP_NAME_TIME, Context.MODE_PRIVATE);
             if (mSharedPreferences != null) {
-
                 //start the UI handler to update every second.
                 if (!alreadyStarted) {
                     mUtils.firstUpdateTodays = true;
+
+                    //Used for Time displaying Time worked and Time remaining
+                    //DEclaring here, because initializing once will be enough.
+                    formatter = new SimpleDateFormat("HH:mm:ss", Locale.US);
+                    formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+                    //strating the thread
                     updateTimeHandler.postDelayed(updateTimerThread, 0);
+                    alreadyStarted = true;
                 }
-                alreadyStarted = true;
             } else {
                 Log.d(TAG, "sharedpreferences Context null");
             }
 
+            //AddCustomBreak
             mFab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -111,16 +111,15 @@ public class Today_Fragment extends Fragment {
                     if (startTime != 0) {
                         CustomBreakDialog cdd = new CustomBreakDialog(getActivity());
                         cdd.show();
-                        return;
                     } else {
                         long totalTime = mSharedPreferences.getLong(mUtils.SP_TOTALTIME, 0);
                         if (totalTime != 0) {
                             CustomBreakDialog cdd = new CustomBreakDialog(getActivity());
                             cdd.show();
-                            return;
+                        } else {
+                            Toast.makeText(getContext(), "No Office Hours", Toast.LENGTH_SHORT ).show();
                         }
                     }
-                    Toast.makeText(getContext(), "No Office Hours", Toast.LENGTH_SHORT ).show();
                 }
             });
         } else {
@@ -158,6 +157,17 @@ public class Today_Fragment extends Fragment {
      */
     private Runnable updateTimerThread = new Runnable() {
         public void run() {
+            if (!checkManualMode()) {
+                Log.d(TAG, "Manual Mode()");
+                mMode.setVisibility(View.VISIBLE);
+                mStartButton.setVisibility(View.VISIBLE);
+                mPauseButton.setVisibility(View.VISIBLE);
+            } else {
+                mMode.setVisibility(View.INVISIBLE);
+                mStartButton.setVisibility(View.INVISIBLE);
+                mPauseButton.setVisibility(View.INVISIBLE);
+            }
+
             if (checkInOffice()) {
                 updateTimeElapsed();
                 mUtils.firstUpdateTodays = false;
@@ -167,6 +177,7 @@ public class Today_Fragment extends Fragment {
                 // reset during updateThreadHandler will update the UI with reset values.
                 boolean resetEverything = mSharedPreferences.getBoolean(mUtils.SP_RESET, false);
                 if (resetEverything) {
+                    Log.d(TAG, "resetEverything");
                     long totalTime = mSharedPreferences.getLong(mUtils.SP_TOTALTIME, 0);
                     if (totalTime == 0) {
                         updateUI(0, true);
@@ -177,6 +188,7 @@ public class Today_Fragment extends Fragment {
                     it does not persist the old paused timings, instead no values are set (looks like reset)
                     firstUpdate is a boolean which will update the old paused values.
                      */
+                    Log.d(TAG, "value "+mUtils.firstUpdateTodays);
                     if (mUtils.firstUpdateTodays) {
                         long totalTime = mSharedPreferences.getLong(mUtils.SP_TOTALTIME, 0);
                         updateUI(totalTime, false);
@@ -280,6 +292,18 @@ public class Today_Fragment extends Fragment {
              editor.putBoolean(mUtils.SP_RESET, false);
              editor.apply();
          }
+    }
+
+    private void setTodaysDate() {
+        //Display Today's Date
+        Date c = Calendar.getInstance().getTime();
+        SimpleDateFormat df = new SimpleDateFormat("MMMM dd yyyy , EEEE");
+        Log.d(TAG, "Todays date is "+df.format(c));
+        mToday.setText(df.format(c));
+    }
+
+    private boolean checkManualMode() {
+        return mSharedPreferences.getBoolean(mUtils.SP_AUTOMATICMODE, false);
     }
 
     @Override

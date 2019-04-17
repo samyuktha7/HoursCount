@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import countedhours.hourscount.CommonUtils;
 import countedhours.hourscount.Fragments.Sheets_Fragment;
 import countedhours.hourscount.Fragments.Today_Fragment;
 import countedhours.hourscount.Fragments.Week_Fragment;
@@ -25,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     private String TAG = "HC_"+MainActivity.class.getSimpleName();
 
     private Fragment mFragment;
+    private CommonUtils mUtils;
 
     @Override
     protected void onStart() {
@@ -36,6 +38,9 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate() ");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mUtils = CommonUtils.getInstance(this);
+        mUtils.mIsInForeground = true;
 
         BottomNavigationView mBottomNavigation = (BottomNavigationView)findViewById(R.id.navigationBar);
 
@@ -108,5 +113,11 @@ public class MainActivity extends AppCompatActivity {
             startActivity(profileNavigationIntent);
         }
         return true;
+    }
+
+    @Override
+    protected void onDestroy() {
+        mUtils.mIsInForeground = false;
+        super.onDestroy();
     }
 }
