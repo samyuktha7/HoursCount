@@ -1,5 +1,6 @@
 package countedhours.hourscount.BroadcastReceivers;
 
+import android.arch.persistence.room.Room;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,7 +12,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import countedhours.hourscount.CommonUtils;
-import countedhours.hourscount.Database.SqLiteDatabaseHelper;
+import countedhours.hourscount.Database.DatabaseHelper;
+import countedhours.hourscount.Database.Sheets;
 
 /*
 This BroadcastReceiver will receive events once a week which does weekly clearing operations
@@ -25,13 +27,14 @@ public class WeeklyReceiver extends BroadcastReceiver {
     private String TAG = WeeklyReceiver.class.getSimpleName();
     private SharedPreferences mSharedPreferences;
     private CommonUtils mUtils;
+    private DatabaseHelper dbHelper;
 
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d(TAG, "onReceive()");
 
         mUtils = CommonUtils.getInstance(context);
-        SqLiteDatabaseHelper dbHelper = SqLiteDatabaseHelper.getInstance(context);
+        dbHelper = Room.databaseBuilder(context,DatabaseHelper.class,  "sheets.db").allowMainThreadQueries().build();
         mSharedPreferences = context.getSharedPreferences(mUtils.SP_NAME_TIME, Context.MODE_PRIVATE);
 
         //get the totalWeekTime (float) from shared preferences.
@@ -42,9 +45,14 @@ public class WeeklyReceiver extends BroadcastReceiver {
         Date date = new Date();
         String todayDate = dateFormat.format(date);
 
-        // store it in database - Sheets Data ( Week End date, Total Week Time)
-        int rowID = dbHelper.insertSheetsValues(todayDate, totalWeekTime);
-        Log.d(TAG, "insertSheetsValues: row ID = "+rowID);
+        if (todayDate != null) {
+            // store it in database - Sheets Data ( Week End date, Total Week Time)
+            Sheets newentry = new Sheets();
+            newentry.setWeekend(todayDate);
+            newentry.setHours(totalWeekTime);
+
+            dbHelper.dao().insertValues(newentry);
+        }
 
         // clear monday, tuesday, wednesday, thursday, friday, saturday, sunday and totalTime values
         ResetAllValuesInWeek();
