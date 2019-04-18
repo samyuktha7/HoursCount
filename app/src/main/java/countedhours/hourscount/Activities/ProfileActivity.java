@@ -176,6 +176,7 @@ public class ProfileActivity extends AppCompatActivity {
                 .setExpirationDuration(Geofence.NEVER_EXPIRE)
                 .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER
                         | Geofence.GEOFENCE_TRANSITION_EXIT)
+                .setNotificationResponsiveness(60000)
                 .build();
 
 

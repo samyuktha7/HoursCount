@@ -47,6 +47,7 @@ public class Week_Fragment extends Fragment {
     private Handler updateTimeHandler = new Handler();
     private DecimalFormat df;
     private float  mTodaysUpdatedTime, mTotalWeeksTime;
+    private int mProgress;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -79,6 +80,7 @@ public class Week_Fragment extends Fragment {
         df = new DecimalFormat();
         df.setMaximumFractionDigits(1);
 
+        mProgress = 0;
         if (this.getActivity() != null) {
 
             //week start date of week
@@ -188,10 +190,13 @@ public class Week_Fragment extends Fragment {
         }
         mTotal.setText(df.format(mTotalWeeksTime));
 
-        //updateCircularUI - total weeks time in 40 hours
-        float percentage = (((float) mTotalWeeksTime * 100) / 40 );
-        Log.d(TAG, "percentage is  "+percentage);
-        mWeekProgress.setProgress(percentage);
+        //updateCircularUI - total weeks time in 40 hours - only if the percentage increases
+        int percentage = (int) (((float) mTotalWeeksTime * 100) / 40 );
+        if (mProgress != percentage) {
+            Log.d(TAG, "percentage is  "+percentage);
+            mWeekProgress.setProgress(percentage);
+            mProgress = percentage;
+        }
     }
 
     /*

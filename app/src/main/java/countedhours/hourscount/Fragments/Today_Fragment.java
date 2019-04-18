@@ -52,6 +52,8 @@ public class Today_Fragment extends Fragment {
     private boolean showWarningOnce = true;
     private String checkOut;
     private Context mContext;
+    private boolean isInManualMode;
+    private int progress = 0;
 
     private long eightHoursADay = 8 * 60 * 60000;
 
@@ -106,7 +108,6 @@ public class Today_Fragment extends Fragment {
                     //DEclaring here, because initializing once will be enough.
                     formatter = new SimpleDateFormat("HH:mm:ss", Locale.US);
                     formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
-
                     //strating the thread
                     updateTimeHandler.postDelayed(updateTimerThread, 0);
                     alreadyStarted = true;
@@ -263,14 +264,13 @@ public class Today_Fragment extends Fragment {
                  long timeToWork = ((8 * 60 * 60000) - totalTime);
                  mTimeRemaining.setText(formatter.format(new Date(timeToWork)) + " Remaining ");
 
-                 float percentage = (((float)totalTime * 100)/eightHoursADay);
-                 Log.d(TAG, "percentage on circular progress bar "+percentage);
-                 mProgressBar.setProgress(percentage);
+                 int percentage = (int) (((float)totalTime * 100)/eightHoursADay);
+                 setProgress(percentage);
              } else {
                  Log.d(TAG, "8 hours finished. No need to calculate time remaining");
                  mTimeRemaining.setText("OVER TIME");
                  mTimeRemaining.setTextColor(getResources().getColor(R.color.secondary));
-                 mProgressBar.setProgress(100);
+                 setProgress(100);
              }
 
 
@@ -290,7 +290,7 @@ public class Today_Fragment extends Fragment {
              mLastCheckedIn.setText("00:00");
              mLastCheckedOut.setText("00:00");
              mInOffice.setText("Out Of Office");
-             mProgressBar.setProgress(0);
+             setProgress(0);
 
              //Notify reset complete
              SharedPreferences.Editor editor = mSharedPreferences.edit();
@@ -307,11 +307,27 @@ public class Today_Fragment extends Fragment {
         mToday.setText(df.format(c));
     }
 
+    /*
+    Only set the progress, if it changes (in Integer)
+     */
+    private void setProgress(int percentage) {
+        if (progress != percentage) {
+            Log.d(TAG, "setProgress() "+percentage);
+            mProgressBar.setProgress(percentage);
+            progress = percentage;
+        }
+    }
+
     private void checkMode() {
-        if (!mSharedPreferences.getBoolean(mUtils.SP_AUTOMATICMODE, false)) {
-            handleManualModeUI(true);
-        } else {
-            handleAutomaticModeUI();
+        Log.d(TAG, "checkMode()");
+        boolean mode = mSharedPreferences.getBoolean(mUtils.SP_AUTOMATICMODE, false);
+        if (isInManualMode != mode) {
+            if (!mode) {
+                handleManualModeUI(true);
+            } else {
+                handleAutomaticModeUI();
+            }
+            isInManualMode = mode;
         }
     }
 
@@ -379,6 +395,7 @@ public class Today_Fragment extends Fragment {
         updateTimeHandler.removeCallbacks(updateTimerThread);
         alreadyStarted = false;
         inOffice = false;
+        progress = 0;
     }
 
     @Override
