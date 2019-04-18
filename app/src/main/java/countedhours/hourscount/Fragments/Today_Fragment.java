@@ -173,7 +173,6 @@ public class Today_Fragment extends Fragment {
             // setUp Mode UI
             checkMode();
 
-
             if (checkInOffice()) {
                 updateTimeElapsed();
                 mUtils.firstUpdateTodays = false;
