@@ -182,12 +182,14 @@
             android:layout_height="wrap_content"
             android:text="CheckIN"
             android:background="@color/secondary"
+            android:visibility="invisible"
             android:textColor="#ffffff"
             android:id="@+id/startButton" />
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="CheckOUT"
+            android:visibility="invisible"
             android:background="@color/secondary"
             android:textColor="#ffffff"
             android:layout_marginLeft="25dp"

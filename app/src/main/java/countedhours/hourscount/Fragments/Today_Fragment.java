@@ -50,7 +50,7 @@ public class Today_Fragment extends Fragment {
     private boolean inOffice;
     private boolean alreadyStarted = false;
     private boolean showWarningOnce = true;
-    private String checkOut = null;
+    private String checkOut;
     private Context mContext;
 
     private long eightHoursADay = 8 * 60 * 60000;
@@ -90,6 +90,11 @@ public class Today_Fragment extends Fragment {
             mUtils = CommonUtils.getInstance(this.getActivity());
             mContext = this.getActivity();
             setTodaysDate();
+            if (!mUtils.isNetworkAvailable(this.getActivity())) {
+                handleManualModeUI(false);
+            } else {
+                handleAutomaticModeUI();
+            }
 
             mSharedPreferences = this.getActivity().getSharedPreferences(mUtils.SP_NAME_TIME, Context.MODE_PRIVATE);
             if (mSharedPreferences != null) {
@@ -164,44 +169,9 @@ public class Today_Fragment extends Fragment {
      */
     private Runnable updateTimerThread = new Runnable() {
         public void run() {
-            if (!checkManualMode()) {
-                Log.d(TAG, "Manual Mode()");
-                mMode.setVisibility(View.VISIBLE);
-                mStartButton.setVisibility(View.VISIBLE);
-                mPauseButton.setVisibility(View.VISIBLE);
-                if (showWarningOnce) {
-                    final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                    builder.setMessage("This App will better perform in Automatic Mode. Turn ON Location Services");
-                    builder.setCancelable(true);
-                    builder.setPositiveButton(
-                            "OK",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    Intent myAppSettings = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                                            Uri.parse("package:" + mContext.getPackageName()));
-                                    myAppSettings.addCategory(Intent.CATEGORY_DEFAULT);
-                                    myAppSettings.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    startActivity(myAppSettings);
-                                }
-                            });
+            // setUp Mode UI
+            checkMode();
 
-                    builder.setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
-                    });
-                    AlertDialog alertDialog = builder.create();
-                    alertDialog.show();
-                    showWarningOnce = false;
-                }
-
-            } else {
-                showWarningOnce = true;
-                mMode.setVisibility(View.INVISIBLE);
-                mStartButton.setVisibility(View.INVISIBLE);
-                mPauseButton.setVisibility(View.INVISIBLE);
-            }
 
             if (checkInOffice()) {
                 updateTimeElapsed();
@@ -337,8 +307,69 @@ public class Today_Fragment extends Fragment {
         mToday.setText(df.format(c));
     }
 
-    private boolean checkManualMode() {
-        return mSharedPreferences.getBoolean(mUtils.SP_AUTOMATICMODE, false);
+    private void checkMode() {
+        if (!mSharedPreferences.getBoolean(mUtils.SP_AUTOMATICMODE, false)) {
+            handleManualModeUI(true);
+        } else {
+            handleAutomaticModeUI();
+        }
+    }
+
+    private void handleManualModeUI(boolean location) {
+        Log.d(TAG, "Manual Mode()");
+        mMode.setVisibility(View.VISIBLE);
+        mStartButton.setVisibility(View.VISIBLE);
+        mPauseButton.setVisibility(View.VISIBLE);
+        if (showWarningOnce) {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+            if (location) {
+                builder.setMessage("This App will better perform in Automatic Mode. Turn ON Location Services");
+                builder.setPositiveButton(
+                        "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                Intent myAppSettings = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                        Uri.parse("package:" + mContext.getPackageName()));
+                                myAppSettings.addCategory(Intent.CATEGORY_DEFAULT);
+                                myAppSettings.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(myAppSettings);
+                            }
+                        });
+            } else {
+                builder.setMessage("This App will better perform in Automatic Mode. Turn ON Internet Connectivity");
+                builder.setPositiveButton(
+                        "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                Intent intent=new Intent(Settings.ACTION_WIRELESS_SETTINGS);
+                                startActivity(intent);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(intent);
+                            }
+                        });
+
+            }
+            builder.setCancelable(true);
+
+
+            builder.setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+            showWarningOnce = false;
+        }
+    }
+
+    private void handleAutomaticModeUI() {
+        Log.d(TAG, "handleAutomaticModeUI");
+        showWarningOnce = true;
+        mMode.setVisibility(View.INVISIBLE);
+        mStartButton.setVisibility(View.INVISIBLE);
+        mPauseButton.setVisibility(View.INVISIBLE);
     }
 
     @Override

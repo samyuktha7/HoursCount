@@ -159,7 +159,7 @@ public class ProfileActivity extends AppCompatActivity {
         // Create a Geofence
         String id = UUID.randomUUID().toString();
 
-        if (mUtils.ifLocationAvailable(this)) {
+        if (mUtils.ifLocationAvailable(this) && mUtils.isNetworkAvailable(this)) {
             mEditor.putBoolean(mUtils.SP_AUTOMATICMODE, true);
         }
 
